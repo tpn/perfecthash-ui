@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const PerfectHashForm = () => {
-  const [keysPath, setKeysPath] = useState("c:\\src\\perfecthash-keys\\sys32\\HolgramWorld-31016.keys");
+  const [keysPath, setKeysPath] = useState("c:\\src\\perfecthash-keys\\sys32\\HologramWorld-31016.keys");
   const [outputDirectory, setOutputDirectory] = useState("c:\\Temp\\ph.out");
   const [algorithm, setAlgorithm] = useState("Chm01");
   const [hashFunction, setHashFunction] = useState("MultiplyShiftR");
