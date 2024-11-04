@@ -1,22 +1,89 @@
 import React, { useState, useEffect } from "react";
 
+// Helper function to format the current date and time
+const getCurrentDateTimeString = () => {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  const hours = String(now.getHours()).padStart(2, "0");
+  const minutes = String(now.getMinutes()).padStart(2, "0");
+  const seconds = String(now.getSeconds()).padStart(2, "0");
+  return `${year}-${month}-${day}-${hours}-${minutes}-${seconds}`;
+};
+
 const PerfectHashForm = () => {
-  const [keysPath, setKeysPath] = useState("c:\\src\\perfecthash-keys\\sys32\\HologramWorld-31016.keys");
-  const [outputDirectory, setOutputDirectory] = useState("c:\\Temp\\ph.out");
+
+  //
+  // Top-level state for form values.
+  //
+
+  const [platform, setPlatform] = useState("Windows"); // Windows|Linux
+  const [exeType, setExeType] = useState("Create");    // Create|Bulk Create
+
+  //
+  // Mandatory arguments.
+  //
+
+  const [keysPath, setKeysPath] = useState("");
+  const [keysDirectory, setKeysDirectory] = useState("");
+  // Change keysPath and keysDirectory based on platform.
+  useEffect(() => {
+    if (platform === "Windows") {
+      setKeysPath("c:\\src\\perfecthash-keys\\sys32\\HologramWorld-31016.keys");
+      setKeysDirectory("c:\\src\\perfecthash-keys\\sys32");
+    } else {
+      setKeysPath("~/src/perfecthash-keys/sys32/HologramWorld-31016.keys");
+      setKeysDirectory("~/src/perfecthash-keys/sys32");
+    }
+  }, [platform]);
+
+  const [outputDirectory, setOutputDirectory] = useState("");
+  // Change outputDirectory based on platform.
+  useEffect(() => {
+    const timestamp = getCurrentDateTimeString();
+    if (platform === "Windows") {
+      setOutputDirectory(`c:\\Temp\\ph.out.${timestamp}`);
+    } else {
+      setOutputDirectory(`~/tmp/ph.out.${timestamp}`);
+    }
+  }, [platform]);
+
   const [algorithm, setAlgorithm] = useState("Chm01");
   const [hashFunction, setHashFunction] = useState("MultiplyShiftR");
   const [maskFunction, setMaskFunction] = useState("And");
   const [maxConcurrency, setMaxConcurrency] = useState("0");
+
+  //
+  // Create flags.
+  //
+
   const [skipTestAfterCreate, setSkipTestAfterCreate] = useState(false);
   const [compile, setCompile] = useState(false);
+
+  //
+  // Keys Load flags.
+  //
+
   const [tryLargePagesForKeysData, setTryLargePagesForKeysData] = useState(false);
   const [skipKeysVerification, setSkipKeysVerification] = useState(false);
   const [disableImplicitKeyDownsizing, setDisableImplicitKeyDownsizing] = useState(false);
   const [tryInferKeySizeFromKeysFilename, setTryInferKeySizeFromKeysFilename] = useState(false);
 
+  //
+  // Table Create flags.
+  //
+
+  const [findBestGraph, setFindBestGraph] = useState(false);
   const [silent, setSilent] = useState(false);
   const [quiet, setQuiet] = useState(false);
+  useEffect(() => {
+    setQuiet(exeType === "Bulk Create" && !findBestGraph);
+  }, [exeType, findBestGraph]);
   const [noFileIo, setNoFileIo] = useState(false);
+  useEffect(() => {
+    setNoFileIo(exeType === "Bulk Create");
+  }, [exeType]);
   const [paranoid, setParanoid] = useState(false);
   const [skipGraphVerification, setSkipGraphVerification] = useState(false);
   const [disableCsvOutputFile, setDisableCsvOutputFile] = useState(false);
@@ -44,10 +111,11 @@ const PerfectHashForm = () => {
   const [disableSavingCallbackTableValues, setDisableSavingCallbackTableValues] = useState(false);
   const [doNotTryUseHash16Impl, setDoNotTryUseHash16Impl] = useState(false);
   const [tryUsePredictedAttemptsToLimitMaxConcurrency, setTryUsePredictedAttemptsToLimitMaxConcurrency] = useState(false);
-  const [findBestGraph, setFindBestGraph] = useState(false);
 
+  //
+  // Table Create parameters.
+  //
 
-  // Table Create Parameters
   const [graphImpl, setGraphImpl] = useState(3); // default: 3
   const [valueSizeInBytes, setValueSizeInBytes] = useState(4); // default: 4
   const [mainWorkThreadpoolPriority, setMainWorkThreadpoolPriority] = useState("Normal"); // default: Normal
@@ -56,9 +124,9 @@ const PerfectHashForm = () => {
   const [maxNumberOfTableResizes, setMaxNumberOfTableResizes] = useState(5); // default: 5
   const [initialNumberOfTableResizes, setInitialNumberOfTableResizes] = useState(0); // default: 0
   const [autoResizeWhenKeysToEdgesRatioExceeds, setAutoResizeWhenKeysToEdgesRatioExceeds] = useState(0.0); // no default specified; requires 0.0 < D < 1.0
-  const [bestCoverageAttempts, setBestCoverageAttempts] = useState(1); // positive integer, no default specified
+  const [bestCoverageAttempts, setBestCoverageAttempts] = useState(5); // positive integer
   const [bestCoverageType, setBestCoverageType] = useState("HighestScore"); // default: none
-  const [maxNumberOfEqualBestGraphs, setMaxNumberOfEqualBestGraphs] = useState(1); // positive integer
+  const [maxNumberOfEqualBestGraphs, setMaxNumberOfEqualBestGraphs] = useState(3); // positive integer
   const [minNumberOfKeysForFindBestGraph, setMinNumberOfKeysForFindBestGraph] = useState(512); // default: 512
   const [bestCoverageTargetValue, setBestCoverageTargetValue] = useState(null); // flexible type based on context
   const [keysSubset, setKeysSubset] = useState(""); // string for comma-separated values
@@ -68,9 +136,7 @@ const PerfectHashForm = () => {
   const [seed3Byte1MaskCounts, setSeed3Byte1MaskCounts] = useState(""); // string for comma-separated 32 integers
   const [seed3Byte2MaskCounts, setSeed3Byte2MaskCounts] = useState(""); // string for comma-separated 32 integers
   const [solutionsFoundRatio, setSolutionsFoundRatio] = useState(null); // for double values
-
   const [rng, setRng] = useState("Philox43210"); // default: Philox43210
-  // State variables for the final Table Create Parameters
   const [rngSeed, setRngSeed] = useState("0x2019090319811025"); // default seed in hex
   const [rngSubsequence, setRngSubsequence] = useState(0); // default: 0
   const [rngOffset, setRngOffset] = useState(0); // default: 0
@@ -80,7 +146,18 @@ const PerfectHashForm = () => {
   const [functionHookCallbackIgnoreRip, setFunctionHookCallbackIgnoreRip] = useState(null); // integer RIP
   const [remark, setRemark] = useState(""); // remark string
 
-  const command = `PerfectHashCreate.exe ${keysPath} ${outputDirectory} ${algorithm} ${hashFunction} ${maskFunction} ${maxConcurrency}` +
+  const exeTypeString = (exeType === "Create" ? "PerfectHashCreate" : "PerfectHashBulkCreate");
+  const exeSuffix = (platform === "Windows" ? ".exe" : "");
+  const exe = `${exeTypeString}${exeSuffix}`;
+
+  //
+  // If our exeType is Create, we use the keysPath as the keysTarget.
+  // Otherwise, we use the keysDirectory as the keysTarget.
+  //
+
+  const keysTarget = (exeType === "Create" ? keysPath : keysDirectory);
+
+  const command = `${exe} ${keysTarget} ${outputDirectory} ${algorithm} ${hashFunction} ${maskFunction} ${maxConcurrency}` +
     (skipTestAfterCreate ? " --SkipTestAfterCreate" : "") +
     (compile ? " --Compile" : "") +
     (tryLargePagesForKeysData ? " --TryLargePagesForKeysData" : "") +
@@ -152,6 +229,15 @@ const PerfectHashForm = () => {
     (remark ? ` --Remark="${remark}"` : "");
 
   useEffect(() => {
+    // Copy command to clipboard whenever it changes
+    if (command) {
+      navigator.clipboard.writeText(command).catch((err) =>
+        console.error("Failed to copy command to clipboard:", err)
+      );
+    }
+  }, [command]);
+
+  useEffect(() => {
     // Create script element for Google Analytics
     const script1 = document.createElement('script');
     script1.async = true;
@@ -177,18 +263,62 @@ const PerfectHashForm = () => {
 
   return (
     <div style={{ minWidth: "600px", maxWidth: "1800px", margin: "auto", padding: "20px" }}>
+      <small>
+        N.B. This tool was hacked together in a single evening.  I don't know React, JavaScript,
+        or any web dev.  ChatGPT authored the vast majority of this code via my prompts.<br />
+        <a href="https://github.com/tpn/perfecthash-ui/blob/main/src/PerfectHashForm.js" target="_blank" rel="noreferrer">GitHub</a>
+        | <a href="https://trent.me" target="_blank" rel="noreferrer">Trent Nelson</a>
+      </small>
       <h2>PerfectHashCreate Command Generator</h2>
 
       <div>
-        <label>Keys Path:</label>
-        <input
-          type="text"
-          value={keysPath}
-          onChange={(e) => setKeysPath(e.target.value)}
-          placeholder="Enter keys file path"
+        <label>Platform:</label>
+        <select
+          value={platform}
+          onChange={(e) => setPlatform(e.target.value)}
           style={{ width: "100%", marginBottom: "10px" }}
-        />
+        >
+          <option value="Windows">Windows</option>
+          <option value="Linux">Linux</option>
+        </select>
       </div>
+
+      <div>
+        <label>Executable Type:</label>
+        <select
+          value={exeType}
+          onChange={(e) => setExeType(e.target.value)}
+          style={{ width: "100%", marginBottom: "10px" }}
+        >
+          <option value="Create">Create</option>
+          <option value="Bulk Create">Bulk Create</option>
+        </select>
+      </div>
+
+      {/* Conditionally render Keys Path or Keys Directory based on exeType */}
+      {exeType === "Create" ? (
+        <div id="keys-path">
+          <label>Keys Path:</label>
+          <input
+            type="text"
+            value={keysPath}
+            onChange={(e) => setKeysPath(e.target.value)}
+            placeholder="Enter keys file path"
+            style={{ width: "100%", marginBottom: "10px" }}
+          />
+        </div>
+      ) : (
+        <div id="keys-dir">
+          <label>Keys Directory:</label>
+          <input
+            type="text"
+            value={keysDirectory}
+            onChange={(e) => setKeysDirectory(e.target.value)}
+            placeholder="Enter keys directory"
+            style={{ width: "100%", marginBottom: "10px" }}
+          />
+        </div>
+      )}
 
       <div>
         <label>Output Directory:</label>
@@ -582,56 +712,148 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row 7: Hash All Keys First */}
-        <div style={{ display: "table-row", border: "2px solid red", padding: "10px" }}>
-          <div style={{ display: "table-cell", padding: "10px", border: "2px solid red" }}>
-            <div>
-              <input
-                type="radio"
-                id="hashAllKeysFirst"
-                name="hashKeys"
-                value="hashAll"
-                checked={hashAllKeysFirst}
-                onChange={() => setHashAllKeysFirst(true)}
-              />
-              <label htmlFor="hashAllKeysFirst" style={{ marginLeft: "8px" }}>Hash All Keys First</label>
-            </div>
-            <div style={{ marginTop: "8px" }}>
-              <input
-                type="radio"
-                id="doNotHashAllKeysFirst"
-                name="hashKeys"
-                value="doNotHashAll"
-                checked={!hashAllKeysFirst}
-                onChange={() => setHashAllKeysFirst(false)}
-              />
-              <label htmlFor="doNotHashAllKeysFirst" style={{ marginLeft: "8px" }}>Do Not Hash All Keys First</label>
-            </div>
-          </div>
-          <div style={{ display: "table-cell", padding: "10px", border: "2px solid red", verticalAlign: "top" }}>
-            <span>Determines if keys are hashed up-front before constructing the graph.</span>
-          </div>
-        </div>
-
-        {/* Additional rows as necessary, following the same format for other flags */}
-        {/* Row 1: Enable Write Combine For Vertex Pairs */}
+        {/* Row for Disable CSV Output File */}
         <div style={{ display: "table-row", border: "2px solid red", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid red" }}>
             <input
               type="checkbox"
-              checked={enableWriteCombineForVertexPairs}
-              onChange={(e) => setEnableWriteCombineForVertexPairs(e.target.checked)}
-              id="enableWriteCombineForVertexPairs"
+              checked={disableCsvOutputFile}
+              onChange={(e) => setDisableCsvOutputFile(e.target.checked)}
+              id="disableCsvOutputFile"
             />
-            <label htmlFor="enableWriteCombineForVertexPairs" style={{ marginLeft: "8px" }}>
-              Enable Write Combine For Vertex Pairs
+            <label htmlFor="disableCsvOutputFile" style={{ marginLeft: "8px" }}>
+              Disable CSV Output File
             </label>
           </div>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid red", verticalAlign: "top" }}>
             <span>
-              Allocates memory for the vertex pairs array with write-combine page protection. <br />
-              <strong>Note:</strong> Only applies when <code>--HashAllKeysFirst</code> is set.
-              Incompatible with <code>--TryLargePagesForVertexPairs</code>.
+              When present, disables writing the .csv output file. This is required when
+              running multiple instances of the tool against the same output directory in parallel.
+            </span>
+          </div>
+        </div>
+
+        {/* Row for Omit CSV Row If Table Create Failed */}
+        <div style={{ display: "table-row", border: "2px solid red", padding: "10px" }}>
+          <div style={{ display: "table-cell", padding: "10px", border: "2px solid red" }}>
+            <input
+              type="checkbox"
+              checked={omitCsvRowIfTableCreateFailed}
+              onChange={(e) => setOmitCsvRowIfTableCreateFailed(e.target.checked)}
+              id="omitCsvRowIfTableCreateFailed"
+            />
+            <label htmlFor="omitCsvRowIfTableCreateFailed" style={{ marginLeft: "8px" }}>
+              Omit CSV Row If Table Create Failed
+            </label>
+          </div>
+          <div style={{ display: "table-cell", padding: "10px", border: "2px solid red", verticalAlign: "top" }}>
+            <span>
+              Omits writing a row in the .csv output file if table creation fails for a given keys file.
+              Ignored if Disable CSV Output File is specified.
+            </span>
+          </div>
+        </div>
+
+        {/* Row for Omit CSV Row If Table Create Succeeded */}
+        <div style={{ display: "table-row", border: "2px solid red", padding: "10px" }}>
+          <div style={{ display: "table-cell", padding: "10px", border: "2px solid red" }}>
+            <input
+              type="checkbox"
+              checked={omitCsvRowIfTableCreateSucceeded}
+              onChange={(e) => setOmitCsvRowIfTableCreateSucceeded(e.target.checked)}
+              id="omitCsvRowIfTableCreateSucceeded"
+            />
+            <label htmlFor="omitCsvRowIfTableCreateSucceeded" style={{ marginLeft: "8px" }}>
+              Omit CSV Row If Table Create Succeeded
+            </label>
+          </div>
+          <div style={{ display: "table-cell", padding: "10px", border: "2px solid red", verticalAlign: "top" }}>
+            <span>
+              Omits writing a row in the .csv output file if table creation succeeded for a given keys file.
+              Ignored if Disable CSV Output File is specified.
+            </span>
+          </div>
+        </div>
+
+        {/* Row for Index Only */}
+        <div style={{ display: "table-row", border: "2px solid red", padding: "10px" }}>
+          <div style={{ display: "table-cell", padding: "10px", border: "2px solid red" }}>
+            <input
+              type="checkbox"
+              checked={indexOnly}
+              onChange={(e) => setIndexOnly(e.target.checked)}
+              id="indexOnly"
+            />
+            <label htmlFor="indexOnly" style={{ marginLeft: "8px" }}>
+              Index Only
+            </label>
+          </div>
+          <div style={{ display: "table-cell", padding: "10px", border: "2px solid red", verticalAlign: "top" }}>
+            <span>
+              When set, affects the generated C files by defining the C preprocessor macro CPH_INDEX_ONLY,
+              which omits the compiled perfect hash routines that deal with the underlying table values array.
+            </span>
+          </div>
+        </div>
+
+        {/* Row for Use Non-Temporal AVX2 Routines */}
+        <div style={{ display: "table-row", border: "2px solid red", padding: "10px" }}>
+          <div style={{ display: "table-cell", padding: "10px", border: "2px solid red" }}>
+            <input
+              type="checkbox"
+              checked={useNonTemporalAvx2Routines}
+              onChange={(e) => setUseNonTemporalAvx2Routines(e.target.checked)}
+              id="useNonTemporalAvx2Routines"
+            />
+            <label htmlFor="useNonTemporalAvx2Routines" style={{ marginLeft: "8px" }}>
+              Use Non-Temporal AVX2 Routines
+            </label>
+          </div>
+          <div style={{ display: "table-cell", padding: "10px", border: "2px solid red", verticalAlign: "top" }}>
+            <span>
+              Uses implementations of RtlCopyPages and RtlFillPages with non-temporal hints.
+            </span>
+          </div>
+        </div>
+
+        {/* Row for Clamp Number of Edges */}
+        <div style={{ display: "table-row", border: "2px solid red", padding: "10px" }}>
+          <div style={{ display: "table-cell", padding: "10px", border: "2px solid red" }}>
+            <input
+              type="checkbox"
+              checked={clampNumberOfEdges}
+              onChange={(e) => setClampNumberOfEdges(e.target.checked)}
+              id="clampNumberOfEdges"
+            />
+            <label htmlFor="clampNumberOfEdges" style={{ marginLeft: "8px" }}>
+              Clamp Number of Edges
+            </label>
+          </div>
+          <div style={{ display: "table-cell", padding: "10px", border: "2px solid red", verticalAlign: "top" }}>
+            <span>
+              Clamps the number of edges to always equal the number of keys, rounded up to a power of two,
+              regardless of current table resizes. Used in research on the impact of edge numbers on graph solving probability.
+            </span>
+          </div>
+        </div>
+
+        {/* Row for Use Original Seeded Hash Routines */}
+        <div style={{ display: "table-row", border: "2px solid red", padding: "10px" }}>
+          <div style={{ display: "table-cell", padding: "10px", border: "2px solid red" }}>
+            <input
+              type="checkbox"
+              checked={useOriginalSeededHashRoutines}
+              onChange={(e) => setUseOriginalSeededHashRoutines(e.target.checked)}
+              id="useOriginalSeededHashRoutines"
+            />
+            <label htmlFor="useOriginalSeededHashRoutines" style={{ marginLeft: "8px" }}>
+              Use Original Seeded Hash Routines
+            </label>
+          </div>
+          <div style={{ display: "table-cell", padding: "10px", border: "2px solid red", verticalAlign: "top" }}>
+            <span>
+              Uses the original (slower) seeded hash routines. <br />
+              <strong>Note:</strong> Incompatible with <code>--HashAllKeysFirst</code>.
             </span>
           </div>
         </div>
