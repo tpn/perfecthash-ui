@@ -412,7 +412,6 @@ const PerfectHashForm = () => {
       <div style={{ display: "table", marginTop: "20px", borderCollapse: "collapse", width: "100%" }}>
         <h3>Create Flags</h3>
 
-        {/* Row 1: Skip Test After Create */}
         <div
           style={{
             display: "table-row",
@@ -441,7 +440,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row 2: Compile */}
         <div
           style={{
             display: "table-row",
@@ -474,7 +472,6 @@ const PerfectHashForm = () => {
       <div style={{ display: "table", marginTop: "20px", borderCollapse: "collapse", width: "100%" }}>
         <h3>Keys Load Flags</h3>
 
-        {/* Row 1: Try Large Pages For Keys Data */}
         <div
           style={{
             display: "table-row",
@@ -498,7 +495,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row 2: Skip Keys Verification */}
         <div
           style={{
             display: "table-row",
@@ -522,7 +518,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row 3: Disable Implicit Key Downsizing */}
         <div
           style={{
             display: "table-row",
@@ -546,7 +541,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row 4: Try Infer Key Size From Keys Filename */}
         <div
           style={{
             display: "table-row",
@@ -575,7 +569,6 @@ const PerfectHashForm = () => {
       <div style={{ display: "table", marginTop: "20px", borderCollapse: "collapse", width: "100%" }}>
         <h3>Table Create Flags</h3>
 
-        {/* Row for Find Best Graph */}
         <div style={{ display: "table-row", border: "2px solid gray", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid gray" }}>
             <input
@@ -601,7 +594,6 @@ const PerfectHashForm = () => {
         </div>
 
 
-        {/* Row 1: Silent */}
         <div style={{ display: "table-row", border: "2px solid red", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid red" }}>
             <input
@@ -617,7 +609,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row 2: Quiet */}
         <div style={{ display: "table-row", border: "2px solid red", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid red" }}>
             <input
@@ -633,7 +624,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row 3: No File I/O */}
         <div style={{ display: "table-row", border: "2px solid red", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid red" }}>
             <input
@@ -649,7 +639,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row 4: Paranoid */}
         <div style={{ display: "table-row", border: "2px solid red", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid red" }}>
             <input
@@ -665,7 +654,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row 5: Use/Do Not Use RWS Section for Table Values */}
         <div style={{ display: "table-row", border: "2px solid red", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid red" }}>
             <div>
@@ -696,7 +684,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row 6: Skip Graph Verification */}
         <div style={{ display: "table-row", border: "2px solid red", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid red" }}>
             <input
@@ -712,7 +699,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row for Disable CSV Output File */}
         <div style={{ display: "table-row", border: "2px solid red", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid red" }}>
             <input
@@ -733,7 +719,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row for Omit CSV Row If Table Create Failed */}
         <div style={{ display: "table-row", border: "2px solid red", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid red" }}>
             <input
@@ -743,7 +728,6 @@ const PerfectHashForm = () => {
               id="omitCsvRowIfTableCreateFailed"
             />
             <label htmlFor="omitCsvRowIfTableCreateFailed" style={{ marginLeft: "8px" }}>
-              Omit CSV Row If Table Create Failed
             </label>
           </div>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid red", verticalAlign: "top" }}>
@@ -754,7 +738,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row for Omit CSV Row If Table Create Succeeded */}
         <div style={{ display: "table-row", border: "2px solid red", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid red" }}>
             <input
@@ -764,7 +747,6 @@ const PerfectHashForm = () => {
               id="omitCsvRowIfTableCreateSucceeded"
             />
             <label htmlFor="omitCsvRowIfTableCreateSucceeded" style={{ marginLeft: "8px" }}>
-              Omit CSV Row If Table Create Succeeded
             </label>
           </div>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid red", verticalAlign: "top" }}>
@@ -775,7 +757,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row for Index Only */}
         <div style={{ display: "table-row", border: "2px solid red", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid red" }}>
             <input
@@ -796,7 +777,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row for Use Non-Temporal AVX2 Routines */}
         <div style={{ display: "table-row", border: "2px solid red", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid red" }}>
             <input
@@ -816,7 +796,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row for Clamp Number of Edges */}
         <div style={{ display: "table-row", border: "2px solid red", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid red" }}>
             <input
@@ -837,7 +816,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row for Use Original Seeded Hash Routines */}
         <div style={{ display: "table-row", border: "2px solid red", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid red" }}>
             <input
@@ -858,7 +836,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row for Try Use Predicted Attempts to Limit Max Concurrency */}
         <div style={{ display: "table-row", border: "2px solid gray", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid gray" }}>
             <input
@@ -880,7 +857,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row 2: Remove Write Combine After Successful Hash Keys */}
         <div style={{ display: "table-row", border: "2px solid red", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid red" }}>
             <input
@@ -901,7 +877,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row 3: Try Large Pages For Vertex Pairs */}
         <div style={{ display: "table-row", border: "2px solid red", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid red" }}>
             <input
@@ -922,7 +897,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row 4: Try Large Pages For Graph Edge And Vertex Arrays */}
         <div style={{ display: "table-row", border: "2px solid red", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid red" }}>
             <input
@@ -942,7 +916,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row 5: Try Large Pages For Graph Table Data */}
         <div style={{ display: "table-row", border: "2px solid red", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid red" }}>
             <input
@@ -962,7 +935,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row 6: Use Previous Table Size */}
         <div style={{ display: "table-row", border: "2px solid red", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid red" }}>
             <input
@@ -986,7 +958,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row 1: Include Number Of Table Resize Events In Output Path */}
         <div style={{ display: "table-row", border: "2px solid purple", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid purple" }}>
             <input
@@ -1006,7 +977,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row 2: Include Number Of Table Elements In Output Path */}
         <div style={{ display: "table-row", border: "2px solid purple", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid purple" }}>
             <input
@@ -1028,7 +998,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row 3: RNG Use Random Start Seed */}
         <div style={{ display: "table-row", border: "2px solid purple", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid purple" }}>
             <input
@@ -1049,7 +1018,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row 4: Try Use AVX2 Hash Function */}
         <div style={{ display: "table-row", border: "2px solid purple", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid purple" }}>
             <div>
@@ -1083,7 +1051,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row 1: Try Use AVX512 Hash Function */}
         <div style={{ display: "table-row", border: "2px solid teal", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid teal" }}>
             <input
@@ -1104,7 +1071,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row 2: Do Not Try Use AVX2 Memory Coverage Function */}
         <div style={{ display: "table-row", border: "2px solid teal", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid teal" }}>
             <input
@@ -1124,7 +1090,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row 3: Include Keys In Compiled DLL */}
         <div style={{ display: "table-row", border: "2px solid teal", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid teal" }}>
             <div>
@@ -1157,7 +1122,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row 4: Disable Saving Callback Table Values */}
         <div style={{ display: "table-row", border: "2px solid teal", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid teal" }}>
             <input
@@ -1177,7 +1141,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row 5: Do Not Try Use Hash16 Impl */}
         <div style={{ display: "table-row", border: "2px solid teal", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid teal" }}>
             <input
@@ -1203,7 +1166,6 @@ const PerfectHashForm = () => {
       <div style={{ display: "table", marginTop: "20px", borderCollapse: "collapse", width: "100%" }}>
         <h3>Table Create Parameters</h3>
 
-        {/* Row 1: Graph Implementation */}
         <div style={{ display: "table-row", border: "2px solid gray", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid gray" }}>
             <label htmlFor="graphImpl">Graph Implementation</label>
@@ -1229,7 +1191,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row 2: Value Size In Bytes */}
         <div style={{ display: "table-row", border: "2px solid gray", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid gray" }}>
             <label htmlFor="valueSizeInBytes">Value Size In Bytes</label>
@@ -1250,7 +1211,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row 3: Main Work Threadpool Priority */}
         <div style={{ display: "table-row", border: "2px solid gray", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid gray" }}>
             <label htmlFor="mainWorkThreadpoolPriority">Main Work Threadpool Priority</label>
@@ -1272,7 +1232,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row 4: File Work Threadpool Priority */}
         <div style={{ display: "table-row", border: "2px solid gray", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid gray" }}>
             <label htmlFor="fileWorkThreadpoolPriority">File Work Threadpool Priority</label>
@@ -1294,7 +1253,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row 5: Attempts Before Table Resize */}
         <div style={{ display: "table-row", border: "2px solid gray", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid gray" }}>
             <label htmlFor="attemptsBeforeTableResize">Attempts Before Table Resize</label>
@@ -1313,7 +1271,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row 6: Max Number of Table Resizes */}
         <div style={{ display: "table-row", border: "2px solid gray", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid gray" }}>
             <label htmlFor="maxNumberOfTableResizes">Max Number of Table Resizes</label>
@@ -1332,7 +1289,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row 7: Initial Number of Table Resizes */}
         <div style={{ display: "table-row", border: "2px solid gray", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid gray" }}>
             <label htmlFor="initialNumberOfTableResizes">Initial Number of Table Resizes</label>
@@ -1351,7 +1307,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row 8: Auto Resize When Keys to Edges Ratio Exceeds */}
         <div style={{ display: "table-row", border: "2px solid gray", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid gray" }}>
             <label htmlFor="autoResizeWhenKeysToEdgesRatioExceeds">Auto Resize When Keys to Edges Ratio Exceeds</label>
@@ -1376,7 +1331,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row 9: Best Coverage Attempts */}
         <div style={{ display: "table-row", border: "2px solid gray", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid gray" }}>
             <label htmlFor="bestCoverageAttempts">Best Coverage Attempts</label>
@@ -1396,7 +1350,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row for Best Coverage Type */}
         <div style={{ display: "table-row", border: "2px solid gray", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid gray" }}>
             <label htmlFor="bestCoverageType">Best Coverage Type</label>
@@ -1480,7 +1433,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row for Max Number of Equal Best Graphs */}
         <div style={{ display: "table-row", border: "2px solid gray", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid gray" }}>
             <label htmlFor="maxNumberOfEqualBestGraphs">Max Number of Equal Best Graphs</label>
@@ -1503,7 +1455,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row for Min Number of Keys for Find Best Graph */}
         <div style={{ display: "table-row", border: "2px solid gray", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid gray" }}>
             <label htmlFor="minNumberOfKeysForFindBestGraph">Min Number of Keys for Find Best Graph</label>
@@ -1526,7 +1477,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row for Best Coverage Target Value */}
         <div style={{ display: "table-row", border: "2px solid gray", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid gray" }}>
             <label htmlFor="bestCoverageTargetValue">Best Coverage Target Value</label>
@@ -1551,7 +1501,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row for Keys Subset */}
         <div style={{ display: "table-row", border: "2px solid gray", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid gray" }}>
             <label htmlFor="keysSubset">Keys Subset</label>
@@ -1571,7 +1520,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row for Target Number of Solutions */}
         <div style={{ display: "table-row", border: "2px solid gray", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid gray" }}>
             <label htmlFor="targetNumberOfSolutions">Target Number of Solutions</label>
@@ -1591,7 +1539,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row for Fixed Attempts */}
         <div style={{ display: "table-row", border: "2px solid gray", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid gray" }}>
             <label htmlFor="fixedAttempts">Fixed Attempts</label>
@@ -1611,7 +1558,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row for Seeds */}
         <div style={{ display: "table-row", border: "2px solid gray", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid gray" }}>
             <label htmlFor="seeds">Seeds</label>
@@ -1653,7 +1599,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row for Seed3 Byte 1 Mask Counts */}
         <div style={{ display: "table-row", border: "2px solid gray", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid gray" }}>
             <label htmlFor="seed3Byte1MaskCounts">Seed3 Byte 1 Mask Counts</label>
@@ -1673,7 +1618,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row for Seed3 Byte 2 Mask Counts */}
         <div style={{ display: "table-row", border: "2px solid gray", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid gray" }}>
             <label htmlFor="seed3Byte2MaskCounts">Seed3 Byte 2 Mask Counts</label>
@@ -1693,7 +1637,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row for Solutions Found Ratio */}
         <div style={{ display: "table-row", border: "2px solid gray", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid gray" }}>
             <label htmlFor="solutionsFoundRatio">Solutions Found Ratio</label>
@@ -1724,7 +1667,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row for RNG */}
         <div style={{ display: "table-row", border: "2px solid gray", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid gray" }}>
             <label htmlFor="rng">Random Number Generator (RNG)</label>
@@ -1761,7 +1703,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row for RNG Seed */}
         <div style={{ display: "table-row", border: "2px solid gray", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid gray" }}>
             <label htmlFor="rngSeed">RNG Seed</label>
@@ -1784,7 +1725,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row for RNG Subsequence */}
         <div style={{ display: "table-row", border: "2px solid gray", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid gray" }}>
             <label htmlFor="rngSubsequence">RNG Subsequence</label>
@@ -1808,7 +1748,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row for RNG Offset */}
         <div style={{ display: "table-row", border: "2px solid gray", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid gray" }}>
             <label htmlFor="rngOffset">RNG Offset</label>
@@ -1828,7 +1767,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row for Remark */}
         <div style={{ display: "table-row", border: "2px solid gray", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid gray" }}>
             <label htmlFor="remark">Remark</label>
@@ -1852,7 +1790,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row for Max Solve Time in Seconds */}
         <div style={{ display: "table-row", border: "2px solid gray", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid gray" }}>
             <label htmlFor="maxSolveTimeInSeconds">Max Solve Time in Seconds</label>
@@ -1873,7 +1810,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row for Function Hook Callback DLL Path */}
         <div style={{ display: "table-row", border: "2px solid gray", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid gray" }}>
             <label htmlFor="functionHookCallbackDllPath">Function Hook Callback DLL Path</label>
@@ -1896,7 +1832,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row for Function Hook Callback Function Name */}
         <div style={{ display: "table-row", border: "2px solid gray", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid gray" }}>
             <label htmlFor="functionHookCallbackFunctionName">Function Hook Callback Function Name</label>
@@ -1919,7 +1854,6 @@ const PerfectHashForm = () => {
           </div>
         </div>
 
-        {/* Row for Function Hook Callback Ignore RIP */}
         <div style={{ display: "table-row", border: "2px solid gray", padding: "10px" }}>
           <div style={{ display: "table-cell", padding: "10px", border: "2px solid gray" }}>
             <label htmlFor="functionHookCallbackIgnoreRip">Function Hook Callback Ignore RIP</label>
