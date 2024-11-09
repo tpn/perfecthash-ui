@@ -1,6 +1,26 @@
+@font-face {
+  font-family: 'Comic Mono NF';
+  font-weight: normal;
+  src: url(https://trent.me/Comic.Mono.Bold.Nerd.Font.Complete.ttf);
+}
+
+@font-face {
+  font-family: 'Comic Mono NF';
+  font-weight: bold;
+  src: url(https://trent.me/Comic.Mono.Nerd.Font.Complete.ttf);
+}
+
+@font-face {
+  font-family: 'EB Garamond';
+  font-weight: normal;
+  src: url(https://trent.me/EBGaramond-VariableFont_wght.ttf);
+}
+
+/*
 .App {
   text-align: center;
 }
+*/
 
 .App-logo {
   height: 40vmin;
@@ -35,4 +55,94 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+/* Light mode styles (default) */
+[data-theme="light"] {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+/* Dark mode styles */
+[data-theme="dark"] {
+  background-color: #121212;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .sticky-command-box {
+  background-color: #333333;
+  box-shadow: 0 -1px 5px rgba(255, 255, 255, 0.1);
+}
+
+/* Form controls in dark mode */
+[data-theme="dark"] .form-control,
+[data-theme="dark"] .form-select {
+  background-color: #222222;
+  color: #ffffff;
+  border-color: #444444;
+}
+
+/*
+[data-theme="dark"] .form-select {
+  background-color: transparent;
+  color: #000000;
+}
+*/
+
+/* Accordion and other Bootstrap components */
+[data-theme="dark"] .accordion-body,
+[data-theme="dark"] .accordion-header,
+[data-theme="dark"] .btn {
+  background-color: #333333;
+  color: #ffffff;
+}
+
+/* Button styles in dark mode */
+[data-theme="dark"] .btn-outline-dark {
+  color: #ffffff;
+  border-color: #ffffff;
+}
+
+[data-theme="dark"] .btn-primary {
+  background-color: #0069d9;
+  border-color: #0062cc;
+}
+
+/* Default (light mode) styles */
+.sticky-command-box {
+  position: sticky;
+  bottom: 0;
+  background-color: white;
+  box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.1);
+  z-index: 1030;
+  padding: 1rem;
+  /* Matches Bootstrap's p-3 */
+  margin-top: 1rem;
+  /* Matches Bootstrap's mt-4 */
+}
+
+/* Dark mode styles */
+[data-theme="dark"] .sticky-command-box {
+  background-color: #333333;
+  box-shadow: 0 -1px 5px rgba(255, 255, 255, 0.1);
+}
+
+/* Form control inside sticky box */
+.sticky-command-box .form-control {
+  height: 150px;
+}
+
+/* Button inside sticky box */
+.sticky-command-box .btn {
+  margin-top: 0.5rem;
+}
+
+.perfecthash-form {
+  padding-top: 30px;
+}
+
+/* Add this CSS to your stylesheet */
+.same-width-left-column {
+  flex-basis: max-content;
+  flex-shrink: 0;
 }
