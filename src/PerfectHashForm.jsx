@@ -492,7 +492,7 @@ const PerfectHashForm = () => {
   const uncommonRef = useRef(null);
 
   useEffect(() => {
-    fetch('/cli.md')
+    fetch(`${import.meta.env.BASE_URL}cli.md`)
       .then((response) => response.text())
       .then((text) => {
         // Split by level-one headers (`# `)
