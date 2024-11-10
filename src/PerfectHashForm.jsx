@@ -969,125 +969,125 @@ const PerfectHashForm = () => {
           <Accordion.Item eventKey="0">
             <Accordion.Header>Table Create Flags</Accordion.Header>
             <Accordion.Body>
-              <Table borderless className="w-100 table-2c-custom">
-                <tbody>
-                  {formState.uncommonOptions && (
-                    <tr>
-                      <td>
-                        <Form.Check
-                          type="checkbox"
-                          label="Silent"
-                          id="silent"
-                          checked={formState.silent}
-                          onChange={(e) => handleChange('silent', e.target.checked)}
-                        />
-                      </td>
-                      <td>
-                        <ReactMarkdown>{cli['Silent']}</ReactMarkdown>
-                      </td>
-                    </tr>
-                  )}
-
-                  <tr>
-                    <td>
+              <div className="d-flex flex-column">
+                {formState.uncommonOptions && (
+                  <Row className="align-items-center mb-3">
+                    <Col xs={12} md={6}>
                       <Form.Check
                         type="checkbox"
-                        label="Quiet"
-                        id="quiet"
-                        checked={formState.quiet}
-                        onChange={(e) => handleChange('quiet', e.target.checked)}
+                        label="Silent"
+                        id="silent"
+                        checked={formState.silent}
+                        onChange={(e) => handleChange('silent', e.target.checked)}
                       />
-                    </td>
-                    <td>
-                      <ReactMarkdown>{cli['Quiet']}</ReactMarkdown>
-                    </td>
-                  </tr>
+                    </Col>
+                    <Col xs={12} md={6} className="mt-2 mt-md-0">
+                      <ReactMarkdown>{cli['Silent']}</ReactMarkdown>
+                    </Col>
+                  </Row>
+                )}
 
-                  <tr>
-                    <td>
+                <Row className="align-items-center mb-3">
+                  <Col xs={12} md={6}>
+                    <Form.Check
+                      type="checkbox"
+                      label="Quiet"
+                      id="quiet"
+                      checked={formState.quiet}
+                      onChange={(e) => handleChange('quiet', e.target.checked)}
+                    />
+                  </Col>
+                  <Col xs={12} md={6} className="mt-2 mt-md-0">
+                    <ReactMarkdown>{cli['Quiet']}</ReactMarkdown>
+                  </Col>
+                </Row>
+
+                <Row className="align-items-center mb-3">
+                  <Col xs={12} md={6}>
+                    <Form.Check
+                      type="checkbox"
+                      label="No File I/O"
+                      id="noFileIo"
+                      checked={formState.noFileIo}
+                      onChange={(e) => handleChange('noFileIo', e.target.checked)}
+                    />
+                  </Col>
+                  <Col xs={12} md={6} className="mt-2 mt-md-0">
+                    <ReactMarkdown>{cli['NoFileIo']}</ReactMarkdown>
+                  </Col>
+                </Row>
+
+                {formState.advancedOptions && (
+                  <Row className="align-items-center mb-3">
+                    <Col xs={12} md={6}>
                       <Form.Check
                         type="checkbox"
-                        label="No File I/O"
-                        id="noFileIo"
-                        checked={formState.noFileIo}
-                        onChange={(e) => handleChange('noFileIo', e.target.checked)}
+                        label="Index Only"
+                        id="indexOnly"
+                        checked={formState.indexOnly}
+                        onChange={(e) => handleChange('indexONly', e.target.checked)}
                       />
-                    </td>
-                    <td>
-                      <ReactMarkdown>{cli['NoFileIo']}</ReactMarkdown>
-                    </td>
-                  </tr>
+                    </Col>
+                    <Col xs={12} md={6} className="mt-2 mt-md-0">
+                      <ReactMarkdown>{cli['IndexOnly']}</ReactMarkdown>
+                    </Col>
+                  </Row>
+                )}
 
-                  {formState.advancedOptions && (
-                    <tr>
-                      <td>
+                {formState.uncommonOptions && (
+                  <Row className="align-items-center mb-3">
+                    <Col xs={12} md={6}>
+                      <Form.Check
+                        type="checkbox"
+                        label="Paranoid"
+                        id="paranoid"
+                        checked={formState.paranoid}
+                        onChange={(e) => handleChange('paranoid', e.target.checked)}
+                      />
+                    </Col>
+                    <Col xs={12} md={6} className="mt-2 mt-md-0">
+                      <ReactMarkdown>{cli['Paranoid']}</ReactMarkdown>
+                    </Col>
+                  </Row>
+                )}
+
+                {formState.advancedOptions && (
+                  <>
+                    <Row className="align-items-center mb-3">
+                      <Col xs={12} md={6}>
+                        <Form.Check
+                          disabled
+                          type="checkbox"
+                          label="Hash All Keys First"
+                          id="disabled-default-checkbox"
+                          checked={!formState.doNotHashAllKeysFirst}
+                        />
+                      </Col>
+                      <Col xs={12} md={6} className="mt-2 mt-md-0">
+                        <ReactMarkdown>{cli['HashAllKeysFirst']}</ReactMarkdown>
+                      </Col>
+                    </Row>
+                    <Row className="align-items-center mb-3">
+                      <Col xs={12} md={6}>
                         <Form.Check
                           type="checkbox"
-                          label="Index Only"
-                          id="indexOnly"
-                          checked={formState.indexOnly}
-                          onChange={(e) => handleChange('indexONly', e.target.checked)}
+                          label="Do Not Hash All Keys First"
+                          id="doNotHashAllKeysFirst"
+                          checked={formState.doNotHashAllKeysFirst}
+                          onChange={(e) => handleChange('doNotHashAllKeysFirst', e.target.checked)}
                         />
-                      </td>
-                      <td>
-                        <ReactMarkdown>{cli['IndexOnly']}</ReactMarkdown>
-                      </td>
-                    </tr>
-                  )}
+                      </Col>
+                      <Col xs={12} md={6} className="mt-2 mt-md-0">
+                        <ReactMarkdown>{cli['DoNotHashAllKeysFirst']}</ReactMarkdown>
+                      </Col>
+                    </Row>
+                  </>
+                )}
 
-                  {formState.uncommonOptions && (
-                    <tr>
-                      <td>
-                        <Form.Check
-                          type="checkbox"
-                          label="Paranoid"
-                          id="paranoid"
-                          checked={formState.paranoid}
-                          onChange={(e) => handleChange('paranoid', e.target.checked)}
-                        />
-                      </td>
-                      <td>
-                        <ReactMarkdown>{cli['Paranoid']}</ReactMarkdown>
-                      </td>
-                    </tr>
-                  )}
-
-                  {formState.advancedOptions && (
-                    <>
-                      <tr>
-                        <td>
-                          <Form.Check
-                            disabled
-                            type="checkbox"
-                            label="Hash All Keys First"
-                            id="disabled-default-checkbox"
-                            checked={!formState.doNotHashAllKeysFirst}
-                          />
-                        </td>
-                        <td>
-                          <ReactMarkdown>{cli['HashAllKeysFirst']}</ReactMarkdown>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <Form.Check
-                            type="checkbox"
-                            label="Do Not Hash All Keys First"
-                            id="doNotHashAllKeysFirst"
-                            checked={formState.doNotHashAllKeysFirst}
-                            onChange={(e) => handleChange('doNotHashAllKeysFirst', e.target.checked)}
-                          />
-                        </td>
-                        <td>
-                          <ReactMarkdown>{cli['DoNotHashAllKeysFirst']}</ReactMarkdown>
-                        </td>
-                      </tr>
-                    </>
-                  )}
-
-                  {formState.platform === 'Windows' && formState.uncommonOptions && (
-                    <tr>
-                      <td>
+                {formState.platform === 'Windows' && formState.uncommonOptions && (
+                  <>
+                    <Row className="align-items-center mb-3">
+                      <Col xs={12} md={6}>
                         <Form.Check
                           disabled={formState.doNotHashAllKeysFirst}
                           type="checkbox"
@@ -1096,16 +1096,14 @@ const PerfectHashForm = () => {
                           checked={!formState.doNotHashAllKeysFirst && formState.enableWriteCombineForVertexPairs}
                           onChange={(e) => handleChange('enableWriteCombineForVertexPairs', e.target.checked)}
                         />
-                      </td>
-                      <td>
+                      </Col>
+                      <Col xs={12} md={6} className="mt-2 mt-md-0">
                         <ReactMarkdown>{cli['EnableWriteCombineForVertexPairs']}</ReactMarkdown>
-                      </td>
-                    </tr>
-                  )}
+                      </Col>
+                    </Row>
 
-                  {formState.platform === 'Windows' && formState.uncommonOptions && (
-                    <tr>
-                      <td>
+                    <Row className="align-items-center mb-3">
+                      <Col xs={12} md={6}>
                         <Form.Check
                           disabled={formState.doNotHashAllKeysFirst}
                           type="checkbox"
@@ -1116,16 +1114,18 @@ const PerfectHashForm = () => {
                           }
                           onChange={(e) => handleChange('removeWriteCombineAfterSuccessfulHashKeys', e.target.checked)}
                         />
-                      </td>
-                      <td>
+                      </Col>
+                      <Col xs={12} md={6} className="mt-2 mt-md-0">
                         <ReactMarkdown>{cli['RemoveWriteCombineAfterSuccessfulHashKeys']}</ReactMarkdown>
-                      </td>
-                    </tr>
-                  )}
+                      </Col>
+                    </Row>
+                  </>
+                )}
 
-                  {formState.platform === 'Windows' && formState.advancedOptions && (
-                    <tr>
-                      <td>
+                {formState.platform === 'Windows' && formState.advancedOptions && (
+                  <>
+                    <Row className="align-items-center mb-3">
+                      <Col xs={12} md={6}>
                         <Form.Check
                           disabled={formState.doNotHashAllKeysFirst}
                           type="checkbox"
@@ -1134,16 +1134,14 @@ const PerfectHashForm = () => {
                           checked={!formState.doNotHashAllKeysFirst && formState.tryLargePagesForVertexPairs}
                           onChange={(e) => handleChange('tryLargePagesForVertexPairs', e.target.checked)}
                         />
-                      </td>
-                      <td>
+                      </Col>
+                      <Col xs={12} md={6} className="mt-2 mt-md-0">
                         <ReactMarkdown>{cli['TryLargePagesForVertexPairs']}</ReactMarkdown>
-                      </td>
-                    </tr>
-                  )}
+                      </Col>
+                    </Row>
 
-                  {formState.platform === 'Windows' && formState.advancedOptions && (
-                    <tr>
-                      <td>
+                    <Row className="align-items-center mb-3">
+                      <Col xs={12} md={6}>
                         <Form.Check
                           disabled={formState.doNotHashAllKeysFirst}
                           type="checkbox"
@@ -1154,16 +1152,14 @@ const PerfectHashForm = () => {
                           }
                           onChange={(e) => handleChange('tryLargePagesForGraphEdgeAndVertexArrays', e.target.checked)}
                         />
-                      </td>
-                      <td>
+                      </Col>
+                      <Col xs={12} md={6} className="mt-2 mt-md-0">
                         <ReactMarkdown>{cli['TryLargePagesForGraphEdgeAndVertexArrays']}</ReactMarkdown>
-                      </td>
-                    </tr>
-                  )}
+                      </Col>
+                    </Row>
 
-                  {formState.platform === 'Windows' && formState.advancedOptions && (
-                    <tr>
-                      <td>
+                    <Row className="align-items-center mb-3">
+                      <Col xs={12} md={6}>
                         <Form.Check
                           disabled={formState.doNotHashAllKeysFirst}
                           type="checkbox"
@@ -1172,457 +1168,435 @@ const PerfectHashForm = () => {
                           checked={!formState.doNotHashAllKeysFirst && formState.tryLargePagesForGraphTableData}
                           onChange={(e) => handleChange('tryLargePagesForGraphTableData', e.target.checked)}
                         />
-                      </td>
-                      <td>
+                      </Col>
+                      <Col xs={12} md={6} className="mt-2 mt-md-0">
                         <ReactMarkdown>{cli['TryLargePagesForGraphTableData']}</ReactMarkdown>
-                      </td>
-                    </tr>
-                  )}
+                      </Col>
+                    </Row>
+                  </>
+                )}
 
-                  {formState.uncommonOptions && (
-                    <tr>
-                      <td>
+                {formState.uncommonOptions && (
+                  <Row className="align-items-center mb-3">
+                    <Col xs={12} md={6}>
+                      <Form.Check
+                        type="checkbox"
+                        label="Skip Memory Coverage In First Graph Wins Mode"
+                        id="skipMemoryCoverageInFirstGraphWinsMode"
+                        checked={formState.skipMemoryCoverageInFirstGraphWinsMode}
+                        onChange={(e) => handleChange('skipMemoryCoverageInFirstGraphWinsMode', e.target.checked)}
+                      />
+                    </Col>
+                    <Col xs={12} md={6} className="mt-2 mt-md-0">
+                      <ReactMarkdown>{cli['SkipMemoryCoverageInFirstGraphWinsMode']}</ReactMarkdown>
+                    </Col>
+                  </Row>
+                )}
+
+                {formState.uncommonOptions && (
+                  <Row className="align-items-center mb-3">
+                    <Col xs={12} md={6}>
+                      <Form.Check
+                        type="checkbox"
+                        label="Skip Graph Verification"
+                        id="skipGraphVerification"
+                        checked={formState.skipGraphVerification}
+                        onChange={(e) => handleChange('skipGraphVerification', e.target.checked)}
+                      />
+                    </Col>
+                    <Col xs={12} md={6} className="mt-2 mt-md-0">
+                      <ReactMarkdown>{cli['SkipGraphVerification']}</ReactMarkdown>
+                    </Col>
+                  </Row>
+                )}
+
+                {formState.uncommonOptions && (
+                  <Row className="align-items-center mb-3">
+                    <Col xs={12} md={6}>
+                      <Form.Check
+                        type="checkbox"
+                        label="Disable CSV Output File"
+                        id="disableCsvOutputFile"
+                        checked={formState.disableCsvOutputFile}
+                        onChange={(e) => handleChange('disableCsvOutputFile', e.target.checked)}
+                      />
+                    </Col>
+                    <Col xs={12} md={6} className="mt-2 mt-md-0">
+                      <ReactMarkdown>{cli['DisableCsvOutputFile']}</ReactMarkdown>
+                    </Col>
+                  </Row>
+                )}
+
+                {formState.uncommonOptions && (
+                  <Row className="align-items-center mb-3">
+                    <Col xs={12} md={6}>
+                      <Form.Check
+                        type="checkbox"
+                        label="Omit CSV Row If Table Create Failed"
+                        id="omitCsvRowIfTableCreateFailed"
+                        checked={formState.omitCsvRowIfTableCreateFailed}
+                        onChange={(e) => handleChange('omitCsvRowIfTableCreateFailed', e.target.checked)}
+                      />
+                    </Col>
+                    <Col xs={12} md={6} className="mt-2 mt-md-0">
+                      <ReactMarkdown>{cli['OmitCsvRowIfTableCreateFailed']}</ReactMarkdown>
+                    </Col>
+                  </Row>
+                )}
+
+                {formState.uncommonOptions && (
+                  <Row className="align-items-center mb-3">
+                    <Col xs={12} md={6}>
+                      <Form.Check
+                        type="checkbox"
+                        label="Omit CSV Row If Table Create Succeeded"
+                        id="omitCsvRowIfTableCreateSucceeded"
+                        checked={formState.omitCsvRowIfTableCreateSucceeded}
+                        onChange={(e) => handleChange('omitCsvRowIfTableCreateSucceeded', e.target.checked)}
+                      />
+                    </Col>
+                    <Col xs={12} md={6} className="mt-2 mt-md-0">
+                      <ReactMarkdown>{cli['OmitCsvRowIfTableCreateSucceeded']}</ReactMarkdown>
+                    </Col>
+                  </Row>
+                )}
+
+                {formState.platform === 'Windows' && formState.advancedOptions && (
+                  <>
+                    <Row className="align-items-center mb-3">
+                      <Col xs={12} md={6}>
+                        <Form.Check
+                          disabled
+                          type="checkbox"
+                          label="Use RWS Section For Table Values"
+                          id="useRwsSectionForTableValues"
+                          checked={!formState.doNotRwsSectionForTableValues}
+                        />
+                      </Col>
+                      <Col xs={12} md={6} className="mt-2 mt-md-0">
+                        <ReactMarkdown>{cli['UseRwsSectionForTableValues']}</ReactMarkdown>
+                      </Col>
+                    </Row>
+                    <Row className="align-items-center mb-3">
+                      <Col xs={12} md={6}>
                         <Form.Check
                           type="checkbox"
-                          label="Skip Memory Coverage In First Graph Wins Mode"
-                          id="skipMemoryCoverageInFirstGraphWinsMode"
-                          checked={formState.skipMemoryCoverageInFirstGraphWinsMode}
-                          onChange={(e) => handleChange('skipMemoryCoverageInFirstGraphWinsMode', e.target.checked)}
+                          label="Do Not Use RWS Section For Table Values"
+                          id="doNotUseRwsSectionForTableValues"
+                          checked={formState.doNotUseRwsSectionForTableValues}
+                          onChange={(e) => handleChange('DoNotUseRwsSectionForTableValues', e.target.checked)}
                         />
-                      </td>
-                      <td>
-                        <ReactMarkdown>{cli['SkipMemoryCoverageInFirstGraphWinsMode']}</ReactMarkdown>
-                      </td>
-                    </tr>
-                  )}
+                      </Col>
+                      <Col xs={12} md={6} className="mt-2 mt-md-0">
+                        <ReactMarkdown>{cli['DoNotUseRwsSectionForTableValues']}</ReactMarkdown>
+                      </Col>
+                    </Row>
+                  </>
+                )}
 
-                  {formState.uncommonOptions && (
-                    <tr>
-                      <td>
+                {formState.platform === 'Windows' && formState.uncommonOptions && (
+                  <Row className="align-items-center mb-3">
+                    <Col xs={12} md={6}>
+                      <Form.Check
+                        type="checkbox"
+                        label="Use Non-Temporal AVX2 Routines"
+                        id="useNonTemporalAvx2Routines"
+                        checked={formState.useNonTemporalAvx2Routines}
+                        onChange={(e) => handleChange('useNonTemporalAvx2Routines', e.target.checked)}
+                      />
+                    </Col>
+                    <Col xs={12} md={6} className="mt-2 mt-md-0">
+                      <ReactMarkdown>{cli['UseNonTemporalAvx2Routines']}</ReactMarkdown>
+                    </Col>
+                  </Row>
+                )}
+
+                {formState.uncommonOptions && (
+                  <Row className="align-items-center mb-3">
+                    <Col xs={12} md={6}>
+                      <Form.Check
+                        type="checkbox"
+                        label="Clamp Number Of Edges"
+                        id="clampNumberOfEdges"
+                        checked={formState.clampNumberOfEdges}
+                        onChange={(e) => handleChange('clampNumberOfEdges', e.target.checked)}
+                      />
+                    </Col>
+                    <Col xs={12} md={6} className="mt-2 mt-md-0">
+                      <ReactMarkdown>{cli['ClampNumberOfEdges']}</ReactMarkdown>
+                    </Col>
+                  </Row>
+                )}
+
+                {formState.uncommonOptions && (
+                  <Row className="align-items-center mb-3">
+                    <Col xs={12} md={6}>
+                      <Form.Check
+                        type="checkbox"
+                        label="Use Original Seeded Hash Routines"
+                        id="useOriginalSeededHashRoutines"
+                        checked={formState.useOriginalSeededHashRoutines}
+                        onChange={(e) => handleChange('useOriginalSeededHashRoutines', e.target.checked)}
+                      />
+                    </Col>
+                    <Col xs={12} md={6} className="mt-2 mt-md-0">
+                      <ReactMarkdown>{cli['UseOriginalSeededHashRoutines']}</ReactMarkdown>
+                    </Col>
+                  </Row>
+                )}
+
+                {formState.uncommonOptions && (
+                  <Row className="align-items-center mb-3">
+                    <Col xs={12} md={6}>
+                      <Form.Check
+                        type="checkbox"
+                        label="Use Previous Table Size"
+                        id="usePreviousTableSize"
+                        checked={formState.usePreviousTableSize}
+                        onChange={(e) => handleChange('usePreviousTableSize', e.target.checked)}
+                      />
+                    </Col>
+                    <Col xs={12} md={6} className="mt-2 mt-md-0">
+                      <ReactMarkdown>{cli['UsePreviousTableSize']}</ReactMarkdown>
+                    </Col>
+                  </Row>
+                )}
+
+                {formState.uncommonOptions && (
+                  <Row className="align-items-center mb-3">
+                    <Col xs={12} md={6}>
+                      <Form.Check
+                        type="checkbox"
+                        label="Include Number Of Table Resize Events In Output Path"
+                        id="includeNumberOfTableResizeEventsInOutputPath"
+                        checked={formState.includeNumberOfTableResizeEventsInOutputPath}
+                        onChange={(e) => handleChange('includeNumberOfTableResizeEventsInOutputPath', e.target.checked)}
+                      />
+                    </Col>
+                    <Col xs={12} md={6} className="mt-2 mt-md-0">
+                      <ReactMarkdown>{cli['IncludeNumberOfTableResizeEventsInOutputPath']}</ReactMarkdown>
+                    </Col>
+                  </Row>
+                )}
+
+                {formState.uncommonOptions && (
+                  <Row className="align-items-center mb-3">
+                    <Col xs={12} md={6}>
+                      <Form.Check
+                        type="checkbox"
+                        label="Include Number Of Table Elements In Output Path"
+                        id="includeNumberOfTableElementsInOutputPath"
+                        checked={formState.includeNumberOfTableElementsInOutputPath}
+                        onChange={(e) => handleChange('includeNumberOfTableElementsInOutputPath', e.target.checked)}
+                      />
+                    </Col>
+                    <Col xs={12} md={6} className="mt-2 mt-md-0">
+                      <ReactMarkdown>{cli['IncludeNumberOfTableElementsInOutputPath']}</ReactMarkdown>
+                    </Col>
+                  </Row>
+                )}
+
+                {formState.uncommonOptions && (
+                  <Row className="align-items-center mb-3">
+                    <Col xs={12} md={6}>
+                      <Form.Check
+                        type="checkbox"
+                        label="Try Use Predicted Attempts To Limit Concurrency"
+                        id="tryUsePredictedAttemptsToLimitConcurrency"
+                        checked={formState.tryUsePredictedAttemptsToLimitMaxConcurrency}
+                        onChange={(e) => handleChange('tryUsePredictedAttemptsToLimitConcurrency', e.target.checked)}
+                      />
+                    </Col>
+                    <Col xs={12} md={6} className="mt-2 mt-md-0">
+                      <ReactMarkdown>{cli['TryUsePredictedAttemptsToLimitMaxConcurrency']}</ReactMarkdown>
+                    </Col>
+                  </Row>
+                )}
+
+                {formState.advancedOptions && (
+                  <Row className="align-items-center mb-3">
+                    <Col xs={12} md={6}>
+                      <Form.Check
+                        type="checkbox"
+                        label="Rng Use Random Start Seed"
+                        id="rngUseRandomStartSeed"
+                        checked={formState.rngUseRandomStartSeed}
+                        onChange={(e) => handleChange('rngUseRandomStartSeed', e.target.checked)}
+                      />
+                    </Col>
+                    <Col xs={12} md={6} className="mt-2 mt-md-0">
+                      <ReactMarkdown>{cli['RngUseRandomStartSeed']}</ReactMarkdown>
+                    </Col>
+                  </Row>
+                )}
+
+                {formState.platform === 'Windows' && formState.advancedOptions && (
+                  <>
+                    <Row className="align-items-center mb-3">
+                      <Col xs={12} md={6}>
+                        <Form.Check
+                          disabled
+                          type="checkbox"
+                          label="Try Use AVX2 Hash Function"
+                          id="tryUseAvx2HashFunction"
+                          checked={!formState.doNotTryUseAvx2HashFunction}
+                        />
+                      </Col>
+                      <Col xs={12} md={6} className="mt-2 mt-md-0">
+                        <ReactMarkdown>{cli['TryUseAvx2HashFunction']}</ReactMarkdown>
+                      </Col>
+                    </Row>
+                    <Row className="align-items-center mb-3">
+                      <Col xs={12} md={6}>
                         <Form.Check
                           type="checkbox"
-                          label="Skip Graph Verification"
-                          id="skipGraphVerification"
-                          checked={formState.skipGraphVerification}
-                          onChange={(e) => handleChange('skipGraphVerification', e.target.checked)}
+                          label="Do Not Try Use AVX2 Hash Function"
+                          id="doNotTryUseAvx2HashFunction"
+                          checked={formState.doNotTryUseAvx2HashFunction}
+                          onChange={(e) => handleChange('doNotTryUseAvx2HashFunction', e.target.checked)}
                         />
-                      </td>
-                      <td>
-                        <ReactMarkdown>{cli['SkipGraphVerification']}</ReactMarkdown>
-                      </td>
-                    </tr>
-                  )}
+                      </Col>
+                      <Col xs={12} md={6} className="mt-2 mt-md-0">
+                        <ReactMarkdown>{cli['DoNotTryUseAvx2HashFunction']}</ReactMarkdown>
+                      </Col>
+                    </Row>
+                  </>
+                )}
 
-                  {formState.uncommonOptions && (
-                    <tr>
-                      <td>
+                {formState.platform === 'Windows' && formState.advancedOptions && (
+                  <Row className="align-items-center mb-3">
+                    <Col xs={12} md={6}>
+                      <Form.Check
+                        type="checkbox"
+                        label="Try Use AVX512 Hash Function"
+                        id="tryUseAvx512HashFunction"
+                        checked={formState.tryUseAvx512HashFunction}
+                        onChange={(e) => handleChange('tryUseAvx512HashFunction', e.target.checked)}
+                      />
+                    </Col>
+                    <Col xs={12} md={6} className="mt-2 mt-md-0">
+                      <ReactMarkdown>{cli['TryUseAvx512HashFunction']}</ReactMarkdown>
+                    </Col>
+                  </Row>
+                )}
+
+                {formState.platform === 'Windows' && formState.advancedOptions && (
+                  <>
+                    <Row className="align-items-center mb-3">
+                      <Col xs={12} md={6}>
+                        <Form.Check
+                          disabled
+                          type="checkbox"
+                          label="Try Use AVX2 Memory Coverage Function"
+                          id="tryUseAvx2MemoryCoverageFunction"
+                          checked={!formState.doNotTryUseAvx2MemoryCoverageFunction}
+                        />
+                      </Col>
+                      <Col xs={12} md={6} className="mt-2 mt-md-0">
+                        <ReactMarkdown>{cli['TryUseAvx2MemoryCoverageFunction']}</ReactMarkdown>
+                      </Col>
+                    </Row>
+                    <Row className="align-items-center mb-3">
+                      <Col xs={12} md={6}>
                         <Form.Check
                           type="checkbox"
-                          label="Disable CSV Output File"
-                          id="disableCsvOutputFile"
-                          checked={formState.disableCsvOutputFile}
-                          onChange={(e) => handleChange('disableCsvOutputFile', e.target.checked)}
+                          label="Do Not Try Use AVX2 Memory Coverage Function"
+                          id="doNotTryUseAvx2MemoryCoverageFunction"
+                          checked={formState.doNotTryUseAvx2MemoryCoverageFunction}
+                          onChange={(e) => handleChange('doNotTryUseAvx2MemoryCoverageFunction', e.target.checked)}
                         />
-                      </td>
-                      <td>
-                        <ReactMarkdown>{cli['DisableCsvOutputFile']}</ReactMarkdown>
-                      </td>
-                    </tr>
-                  )}
+                      </Col>
+                      <Col xs={12} md={6} className="mt-2 mt-md-0">
+                        <ReactMarkdown>{cli['DoNotTryUseAvx2MemoryCoverageFunction']}</ReactMarkdown>
+                      </Col>
+                    </Row>
+                  </>
+                )}
 
-                  {formState.uncommonOptions && (
-                    <tr>
-                      <td>
+                {formState.platform === 'Windows' && formState.advancedOptions && (
+                  <Row className="align-items-center mb-3">
+                    <Col xs={12} md={6}>
+                      <Form.Check
+                        type="checkbox"
+                        label="Try Use AVX512 Memory Coverage Function"
+                        id="tryUseAvx512MemoryCoverageFunction"
+                        checked={formState.tryUseAvx512MemoryCoverageFunction}
+                        onChange={(e) => handleChange('tryUseAvx512MemoryCoverageFunction', e.target.checked)}
+                      />
+                    </Col>
+                    <Col xs={12} md={6} className="mt-2 mt-md-0">
+                      <ReactMarkdown>{cli['TryUseAvx512MemoryCoverageFunction']}</ReactMarkdown>
+                    </Col>
+                  </Row>
+                )}
+
+                {formState.advancedOptions && (
+                  <>
+                    <Row className="align-items-center mb-3">
+                      <Col xs={12} md={6}>
+                        <Form.Check
+                          disabled
+                          type="checkbox"
+                          label="Include Keys In Compiled Dll"
+                          id="includeKeysInCompiledDll"
+                          checked={!formState.doNotIncludeKeysInCompiledDll}
+                        />
+                      </Col>
+                      <Col xs={12} md={6} className="mt-2 mt-md-0">
+                        <ReactMarkdown>{cli['IncludeKeysInCompiledDll']}</ReactMarkdown>
+                      </Col>
+                    </Row>
+                    <Row className="align-items-center mb-3">
+                      <Col xs={12} md={6}>
                         <Form.Check
                           type="checkbox"
-                          label="Omit CSV Row If Table Create Failed"
-                          id="omitCsvRowIfTableCreateFailed"
-                          checked={formState.omitCsvRowIfTableCreateFailed}
-                          onChange={(e) => handleChange('omitCsvRowIfTableCreateFailed', e.target.checked)}
+                          label="Do Not Include Keys In Compiled Dll"
+                          id="doNotIncludeKeysInCompiledDll"
+                          checked={formState.doNotIncludeKeysInCompiledDll}
+                          onChange={(e) => handleChange('doNotIncludeKeysInCompiledDll', e.target.checked)}
                         />
-                      </td>
-                      <td>
-                        <ReactMarkdown>{cli['OmitCsvRowIfTableCreateFailed']}</ReactMarkdown>
-                      </td>
-                    </tr>
-                  )}
+                      </Col>
+                      <Col xs={12} md={6} className="mt-2 mt-md-0">
+                        <ReactMarkdown>{cli['DoNotIncludeKeysInCompiledDll']}</ReactMarkdown>
+                      </Col>
+                    </Row>
+                  </>
+                )}
 
-                  {formState.uncommonOptions && (
-                    <tr>
-                      <td>
-                        <Form.Check
-                          type="checkbox"
-                          label="Omit CSV Row If Table Create Succeeded"
-                          id="omitCsvRowIfTableCreateSucceeded"
-                          checked={formState.omitCsvRowIfTableCreateSucceeded}
-                          onChange={(e) => handleChange('omitCsvRowIfTableCreateSucceeded', e.target.checked)}
-                        />
-                      </td>
-                      <td>
-                        <ReactMarkdown>{cli['OmitCsvRowIfTableCreateSucceeded']}</ReactMarkdown>
-                      </td>
-                    </tr>
-                  )}
+                {formState.advancedOptions && (
+                  <Row className="align-items-center mb-3">
+                    <Col xs={12} md={6}>
+                      <Form.Check
+                        type="checkbox"
+                        label="Disable Saving Callback Table Values"
+                        id="disableSavingCallbackTableValues"
+                        checked={formState.disableSavingCallbackTableValues}
+                        onChange={(e) => handleChange('disableSavingCallbackTableValues', e.target.checked)}
+                      />
+                    </Col>
+                    <Col xs={12} md={6} className="mt-2 mt-md-0">
+                      <ReactMarkdown>{cli['DisableSavingCallbackTableValues']}</ReactMarkdown>
+                    </Col>
+                  </Row>
+                )}
 
-                  {formState.platform === 'Windows' && formState.advancedOptions && (
-                    <>
-                      <tr>
-                        <td>
-                          <Form.Check
-                            disabled
-                            type="checkbox"
-                            label="Use RWS Section For Table Values"
-                            id="useRwsSectionForTableValues"
-                            checked={!formState.doNotRwsSectionForTableValues}
-                          />
-                        </td>
-                        <td>
-                          <ReactMarkdown>{cli['UseRwsSectionForTableValues']}</ReactMarkdown>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <Form.Check
-                            type="checkbox"
-                            label="Do Not Use RWS Section For Table Values"
-                            id="doNotUseRwsSectionForTableValues"
-                            checked={formState.doNotUseRwsSectionForTableValues}
-                            onChange={(e) => handleChange('DoNotUseRwsSectionForTableValues', e.target.checked)}
-                          />
-                        </td>
-                        <td>
-                          <ReactMarkdown>{cli['DoNotUseRwsSectionForTableValues']}</ReactMarkdown>
-                        </td>
-                      </tr>
-                    </>
-                  )}
-                  {formState.platform === 'Windows' && formState.uncommonOptions && (
-                    <>
-                      <tr>
-                        <td>
-                          <Form.Check
-                            type="checkbox"
-                            label="Use Non-Temporal AVX2 Routines"
-                            id="useNonTemporalAvx2Routines"
-                            checked={formState.useNonTemporalAvx2Routines}
-                            onChange={(e) => handleChange('useNonTemporalAvx2Routines', e.target.checked)}
-                          />
-                        </td>
-                        <td>
-                          <ReactMarkdown>{cli['UseNonTemporalAvx2Routines']}</ReactMarkdown>
-                        </td>
-                      </tr>
-                    </>
-                  )}
-                  {formState.uncommonOptions && (
-                    <>
-                      <tr>
-                        <td>
-                          <Form.Check
-                            type="checkbox"
-                            label="Clamp Number Of Edges"
-                            id="clampNumberOfEdges"
-                            checked={formState.clampNumberOfEdges}
-                            onChange={(e) => handleChange('clampNumberOfEdges', e.target.checked)}
-                          />
-                        </td>
-                        <td>
-                          <ReactMarkdown>{cli['ClampNumberOfEdges']}</ReactMarkdown>
-                        </td>
-                      </tr>
-                    </>
-                  )}
-
-                  {formState.uncommonOptions && (
-                    <>
-                      <tr>
-                        <td>
-                          <Form.Check
-                            type="checkbox"
-                            label="Use Original Seeded Hash Routines"
-                            id="useOriginalSeededHashRoutines"
-                            checked={formState.useOriginalSeededHashRoutines}
-                            onChange={(e) => handleChange('useOriginalSeededHashRoutines', e.target.checked)}
-                          />
-                        </td>
-                        <td>
-                          <ReactMarkdown>{cli['UseOriginalSeededHashRoutines']}</ReactMarkdown>
-                        </td>
-                      </tr>
-                    </>
-                  )}
-
-                  {formState.uncommonOptions && (
-                    <>
-                      <tr>
-                        <td>
-                          <Form.Check
-                            type="checkbox"
-                            label="Use Previous Table Size"
-                            id="usePreviousTableSize"
-                            checked={formState.usePreviousTableSize}
-                            onChange={(e) => handleChange('usePreviousTableSize', e.target.checked)}
-                          />
-                        </td>
-                        <td>
-                          <ReactMarkdown>{cli['UsePreviousTableSize']}</ReactMarkdown>
-                        </td>
-                      </tr>
-                    </>
-                  )}
-
-                  {formState.uncommonOptions && (
-                    <>
-                      <tr>
-                        <td>
-                          <Form.Check
-                            type="checkbox"
-                            label="Include Number Of Table Resize Events In Output Path"
-                            id="includeNumberOfTableResizeEventsInOutputPath"
-                            checked={formState.includeNumberOfTableResizeEventsInOutputPath}
-                            onChange={(e) =>
-                              handleChange('includeNumberOfTableResizeEventsInOutputPath', e.target.checked)
-                            }
-                          />
-                        </td>
-                        <td>
-                          <ReactMarkdown>{cli['IncludeNumberOfTableResizeEventsInOutputPath']}</ReactMarkdown>
-                        </td>
-                      </tr>
-                    </>
-                  )}
-
-                  {formState.uncommonOptions && (
-                    <>
-                      <tr>
-                        <td>
-                          <Form.Check
-                            type="checkbox"
-                            label="Include Number Of Table Elements In Output Path"
-                            id="includeNumberOfTableElementsInOutputPath"
-                            checked={formState.includeNumberOfTableElementsInOutputPath}
-                            onChange={(e) => handleChange('includeNumberOfTableElementsInOutputPath', e.target.checked)}
-                          />
-                        </td>
-                        <td>
-                          <ReactMarkdown>{cli['IncludeNumberOfTableElementsInOutputPath']}</ReactMarkdown>
-                        </td>
-                      </tr>
-                    </>
-                  )}
-
-                  {formState.uncommonOptions && (
-                    <>
-                      <tr>
-                        <td>
-                          <Form.Check
-                            type="checkbox"
-                            label="Try Use Predicted Attempts To Limit Concurrency"
-                            id="tryUsePredictedAttemptsToLimitConcurrency"
-                            checked={formState.tryUsePredictedAttemptsToLimitMaxConcurrency}
-                            onChange={(e) =>
-                              handleChange('tryUsePredictedAttemptsToLimitConcurrency', e.target.checked)
-                            }
-                          />
-                        </td>
-                        <td>
-                          <ReactMarkdown>{cli['TryUsePredictedAttemptsToLimitMaxConcurrency']}</ReactMarkdown>
-                        </td>
-                      </tr>
-                    </>
-                  )}
-
-                  {formState.advancedOptions && (
-                    <>
-                      <tr>
-                        <td>
-                          <Form.Check
-                            type="checkbox"
-                            label="Rng Use Random Start Seed"
-                            id="rngUseRandomStartSeed"
-                            checked={formState.rngUseRandomStartSeed}
-                            onChange={(e) => handleChange('rngUseRandomStartSeed', e.target.checked)}
-                          />
-                        </td>
-                        <td>
-                          <ReactMarkdown>{cli['RngUseRandomStartSeed']}</ReactMarkdown>
-                        </td>
-                      </tr>
-                    </>
-                  )}
-
-                  {formState.platform === 'Windows' && formState.advancedOptions && (
-                    <>
-                      <tr>
-                        <td>
-                          <Form.Check
-                            disabled={true}
-                            type="checkbox"
-                            label="Try Use AVX2 Hash Function"
-                            id="tryUseAvx2HashFunction"
-                            checked={!formState.doNotTryUseAvx2HashFunction}
-                          />
-                        </td>
-                        <td>
-                          <ReactMarkdown>{cli['TryUseAvx2HashFunction']}</ReactMarkdown>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <Form.Check
-                            type="checkbox"
-                            label="Do Not Try Use AVX2 Hash Function"
-                            id="doNotTryUseAvx2HashFunction"
-                            checked={formState.doNotTryUseAvx2HashFunction}
-                            onChange={(e) => handleChange('doNotTryUseAvx2HashFunction', e.target.checked)}
-                          />
-                        </td>
-                        <td>
-                          <ReactMarkdown>{cli['DoNotTryUseAvx2HashFunction']}</ReactMarkdown>
-                        </td>
-                      </tr>
-                    </>
-                  )}
-
-                  {formState.platform === 'Windows' && formState.advancedOptions && (
-                    <tr>
-                      <td>
-                        <Form.Check
-                          type="checkbox"
-                          label="Try Use AVX512 Hash Function"
-                          id="tryUseAvx512HashFunction"
-                          checked={formState.tryUseAvx512HashFunction}
-                          onChange={(e) => handleChange('tryUseAvx512HashFunction', e.target.checked)}
-                        />
-                      </td>
-                      <td>
-                        <ReactMarkdown>{cli['TryUseAvx512HashFunction']}</ReactMarkdown>
-                      </td>
-                    </tr>
-                  )}
-
-                  {formState.platform === 'Windows' && formState.advancedOptions && (
-                    <>
-                      <tr>
-                        <td>
-                          <Form.Check
-                            disabled="true"
-                            type="checkbox"
-                            label="Try Use AVX2 Memory Coverage Function"
-                            id="tryUseAvx2MemoryCoverageFunction"
-                            checked={!formState.doNotTryUseAvx2MemoryCoverageFunction}
-                          />
-                        </td>
-                        <td>
-                          <ReactMarkdown>{cli['TryUseAvx2MemoryCoverageFunction']}</ReactMarkdown>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <Form.Check
-                            type="checkbox"
-                            label="Do Not Try Use AVX2 Memory Coverage Function"
-                            id="doNotTryUseAvx2MemoryCoverageFunction"
-                            checked={formState.doNotTryUseAvx2MemoryCoverageFunction}
-                            onChange={(e) => handleChange('doNotTryUseAvx2MemoryCoverageFunction', e.target.checked)}
-                          />
-                        </td>
-                        <td>
-                          <ReactMarkdown>{cli['DoNotTryUseAvx2MemoryCoverageFunction']}</ReactMarkdown>
-                        </td>
-                      </tr>
-                    </>
-                  )}
-
-                  {formState.platform === 'Windows' && formState.advancedOptions && (
-                    <>
-                      <tr>
-                        <td>
-                          <Form.Check
-                            type="checkbox"
-                            label="Try Use AVX512 Memory Coverage Function"
-                            id="tryUseAvx512MemoryCoverageFunction"
-                            checked={formState.tryUseAvx512MemoryCoverageFunction}
-                            onChange={(e) => handleChange('tryUseAvx512MemoryCoverageFunction', e.target.checked)}
-                          />
-                        </td>
-                        <td>
-                          <ReactMarkdown>{cli['TryUseAvx512MemoryCoverageFunction']}</ReactMarkdown>
-                        </td>
-                      </tr>
-                    </>
-                  )}
-
-                  {formState.advancedOptions && (
-                    <>
-                      <tr>
-                        <td>
-                          <Form.Check
-                            disabled="true"
-                            type="checkbox"
-                            label="Include Keys In Compiled Dll"
-                            id="includeKeysInCompiledDll"
-                            checked={!formState.doNotIncludeKeysInCompiledDll}
-                          />
-                        </td>
-                        <td>
-                          <ReactMarkdown>{cli['IncludeKeysInCompiledDll']}</ReactMarkdown>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <Form.Check
-                            type="checkbox"
-                            label="Do Not Include Keys In Compiled Dll"
-                            id="doNotIncludeKeysInCompiledDll"
-                            checked={formState.doNotIncludeKeysInCompiledDll}
-                            onChange={(e) => handleChange('doNotIncludeKeysInCompiledDll', e.target.checked)}
-                          />
-                        </td>
-                        <td>
-                          <ReactMarkdown>{cli['DoNotIncludeKeysInCompiledDll']}</ReactMarkdown>
-                        </td>
-                      </tr>
-                    </>
-                  )}
-
-                  {formState.advancedOptions && (
-                    <>
-                      <tr>
-                        <td>
-                          <Form.Check
-                            type="checkbox"
-                            label="Disable Saving Callback Table Values"
-                            id="disableSavingCallbackTableValues"
-                            checked={formState.disableSavingCallbackTableValues}
-                            onChange={(e) => handleChange('disableSavingCallbackTableValues', e.target.checked)}
-                          />
-                        </td>
-                        <td>
-                          <ReactMarkdown>{cli['DisableSavingCallbackTableValues']}</ReactMarkdown>
-                        </td>
-                      </tr>
-                    </>
-                  )}
-
-                  {formState.advancedOptions && (
-                    <tr>
-                      <td>
-                        <Form.Check
-                          type="checkbox"
-                          label="Do Not Try Use Hash16 Impl"
-                          id="doNotTryUseHash16Impl"
-                          checked={formState.doNotTryUseHash16Impl}
-                          onChange={(e) => handleChange('doNotTryUseHash16Impl', e.target.checked)}
-                        />
-                      </td>
-                      <td>
-                        <ReactMarkdown>{cli['DoNotTryUseHash16Impl']}</ReactMarkdown>
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </Table>
+                {formState.advancedOptions && (
+                  <Row className="align-items-center mb-3">
+                    <Col xs={12} md={6}>
+                      <Form.Check
+                        type="checkbox"
+                        label="Do Not Try Use Hash16 Impl"
+                        id="doNotTryUseHash16Impl"
+                        checked={formState.doNotTryUseHash16Impl}
+                        onChange={(e) => handleChange('doNotTryUseHash16Impl', e.target.checked)}
+                      />
+                    </Col>
+                    <Col xs={12} md={6} className="mt-2 mt-md-0">
+                      <ReactMarkdown>{cli['DoNotTryUseHash16Impl']}</ReactMarkdown>
+                    </Col>
+                  </Row>
+                )}
+              </div>
             </Accordion.Body>
           </Accordion.Item>
         </Accordion>
@@ -1631,164 +1605,161 @@ const PerfectHashForm = () => {
           <Accordion.Item eventKey="0">
             <Accordion.Header>Table Create Parameters</Accordion.Header>
             <Accordion.Body>
-              <Table borderless className="w-100 table-2c-custom">
-                <tbody>
-                  <tr>
-                    <td>
-                      <FloatingLabel controlId="graphImpl" label="Graph Implementation" className="mb-3">
-                        <Form.Select
-                          value={formState.graphImpl}
-                          onChange={(e) => handleChange('graphImpl', e.target.value)}
-                        >
-                          {/* Dynamically generate options from the Zod schema */}
-                          {formSchema.shape.graphImpl.options.map((option) => (
-                            <option key={option} value={option}>
-                              {option}
-                            </option>
-                          ))}
-                        </Form.Select>
-                      </FloatingLabel>
-                    </td>
-                    <td>
-                      <ReactMarkdown>{cli['GraphImpl']}</ReactMarkdown>
-                    </td>
-                  </tr>
-                  {!formState.findBestGraph && (
-                    <>
-                      <tr>
-                        <td>
-                          <FloatingLabel
-                            controlId="maxSolveTimeInSeconds"
-                            label="Max Solve Time in Seconds"
-                            className="mb-3"
-                          >
-                            <Form.Control
-                              value={formState.maxSolveTimeInSeconds}
-                              onChange={(e) => handleChange('maxSolveTimeInSeconds', e.target.value)}
-                            />
-                          </FloatingLabel>
-                        </td>
-                        <td>
-                          <ReactMarkdown>{cli['MaxSolveTimeInSeconds']}</ReactMarkdown>
-                        </td>
-                      </tr>
+              <div className="d-flex flex-column">
+                <Row className="align-items-center mb-3">
+                  <Col xs={12} md={6}>
+                    <FloatingLabel controlId="graphImpl" label="Graph Implementation" className="mb-3">
+                      <Form.Select
+                        value={formState.graphImpl}
+                        onChange={(e) => handleChange('graphImpl', e.target.value)}
+                      >
+                        {/* Dynamically generate options from the Zod schema */}
+                        {formSchema.shape.graphImpl.options.map((option) => (
+                          <option key={option} value={option}>
+                            {option}
+                          </option>
+                        ))}
+                      </Form.Select>
+                    </FloatingLabel>
+                  </Col>
+                  <Col xs={12} md={6} className="mt-2 mt-md-0">
+                    <ReactMarkdown>{cli['GraphImpl']}</ReactMarkdown>
+                  </Col>
+                </Row>
 
-                      <tr>
-                        <td>
-                          <FloatingLabel controlId="fixedAttempts" label="Fixed Attempts" className="mb-3">
-                            <Form.Control
-                              value={formState.fixedAttempts}
-                              onChange={(e) => handleChange('fixedAttempts', e.target.value)}
-                            />
-                          </FloatingLabel>
-                        </td>
-                        <td>
-                          <ReactMarkdown>{cli['FixedAttempts']}</ReactMarkdown>
-                        </td>
-                      </tr>
-                    </>
-                  )}
-                  {formState.advancedOptions && (
-                    <tr>
-                      <td>
-                        <FloatingLabel controlId="valueSizeInBytes" label="Value Size In Bytes" className="mb-3">
+                {!formState.findBestGraph && (
+                  <>
+                    <Row className="align-items-center mb-3">
+                      <Col xs={12} md={6}>
+                        <FloatingLabel
+                          controlId="maxSolveTimeInSeconds"
+                          label="Max Solve Time in Seconds"
+                          className="mb-3"
+                        >
                           <Form.Control
-                            value={formState.valueSizeInBytes}
-                            onChange={(e) => handleChange('valueSizeInBytes', e.target.value)}
+                            value={formState.maxSolveTimeInSeconds}
+                            onChange={(e) => handleChange('maxSolveTimeInSeconds', e.target.value)}
                           />
                         </FloatingLabel>
-                      </td>
-                      <td>
-                        <ReactMarkdown>{cli['ValueSizeInBytes']}</ReactMarkdown>
-                      </td>
-                    </tr>
-                  )}
-                  {/* Rng */}
-                  <tr>
-                    <td>
-                      <FloatingLabel controlId="rng" label="Rng" className="mb-3">
-                        <Form.Select value={formState.rng} onChange={(e) => handleChange('rng', e.target.value)}>
-                          {/* Dynamically generate options from the Zod schema */}
-                          {formSchema.shape.rng.options.map((option) => (
-                            <option key={option} value={option}>
-                              {option}
-                            </option>
-                          ))}
-                        </Form.Select>
-                      </FloatingLabel>
-                    </td>
-                    <td>
-                      <ReactMarkdown>{cli['Rng']}</ReactMarkdown>
-                    </td>
-                  </tr>
+                      </Col>
+                      <Col xs={12} md={6} className="mt-2 mt-md-0">
+                        <ReactMarkdown>{cli['MaxSolveTimeInSeconds']}</ReactMarkdown>
+                      </Col>
+                    </Row>
 
-                  {formState.rng === 'Philox43210' && formState.uncommonOptions && (
-                    <tr>
-                      <td>
+                    <Row className="align-items-center mb-3">
+                      <Col xs={12} md={6}>
+                        <FloatingLabel controlId="fixedAttempts" label="Fixed Attempts" className="mb-3">
+                          <Form.Control
+                            value={formState.fixedAttempts}
+                            onChange={(e) => handleChange('fixedAttempts', e.target.value)}
+                          />
+                        </FloatingLabel>
+                      </Col>
+                      <Col xs={12} md={6} className="mt-2 mt-md-0">
+                        <ReactMarkdown>{cli['FixedAttempts']}</ReactMarkdown>
+                      </Col>
+                    </Row>
+                  </>
+                )}
+
+                {formState.advancedOptions && (
+                  <Row className="align-items-center mb-3">
+                    <Col xs={12} md={6}>
+                      <FloatingLabel controlId="valueSizeInBytes" label="Value Size In Bytes" className="mb-3">
+                        <Form.Control
+                          value={formState.valueSizeInBytes}
+                          onChange={(e) => handleChange('valueSizeInBytes', e.target.value)}
+                        />
+                      </FloatingLabel>
+                    </Col>
+                    <Col xs={12} md={6} className="mt-2 mt-md-0">
+                      <ReactMarkdown>{cli['ValueSizeInBytes']}</ReactMarkdown>
+                    </Col>
+                  </Row>
+                )}
+
+                <Row className="align-items-center mb-3">
+                  <Col xs={12} md={6}>
+                    <FloatingLabel controlId="rng" label="Rng" className="mb-3">
+                      <Form.Select value={formState.rng} onChange={(e) => handleChange('rng', e.target.value)}>
+                        {/* Dynamically generate options from the Zod schema */}
+                        {formSchema.shape.rng.options.map((option) => (
+                          <option key={option} value={option}>
+                            {option}
+                          </option>
+                        ))}
+                      </Form.Select>
+                    </FloatingLabel>
+                  </Col>
+                  <Col xs={12} md={6} className="mt-2 mt-md-0">
+                    <ReactMarkdown>{cli['Rng']}</ReactMarkdown>
+                  </Col>
+                </Row>
+
+                {formState.rng === 'Philox43210' && formState.uncommonOptions && (
+                  <>
+                    <Row className="align-items-center mb-3">
+                      <Col xs={12} md={6}>
                         <FloatingLabel controlId="rngSeed" label="Rng Seed" className="mb-3">
                           <Form.Control
                             value={formState.rngSeed}
                             onChange={(e) => handleChange('rngSeed', e.target.value)}
-                          ></Form.Control>
+                          />
                         </FloatingLabel>
-                      </td>
-                      <td>
+                      </Col>
+                      <Col xs={12} md={6} className="mt-2 mt-md-0">
                         <ReactMarkdown>{cli['RngSeed']}</ReactMarkdown>
-                      </td>
-                    </tr>
-                  )}
+                      </Col>
+                    </Row>
 
-                  {formState.rng === 'Philox43210' && formState.uncommonOptions && (
-                    <tr>
-                      <td>
+                    <Row className="align-items-center mb-3">
+                      <Col xs={12} md={6}>
                         <FloatingLabel controlId="rngSubsequence" label="Rng Subsequence" className="mb-3">
                           <Form.Control
                             value={formState.rngSubsequence}
                             onChange={(e) => handleChange('rngSubsequence', e.target.value)}
-                          ></Form.Control>
+                          />
                         </FloatingLabel>
-                      </td>
-                      <td>
+                      </Col>
+                      <Col xs={12} md={6} className="mt-2 mt-md-0">
                         <ReactMarkdown>{cli['RngSubsequence']}</ReactMarkdown>
-                      </td>
-                    </tr>
-                  )}
+                      </Col>
+                    </Row>
 
-                  {formState.rng === 'Philox43210' && formState.uncommonOptions && (
-                    <tr>
-                      <td>
+                    <Row className="align-items-center mb-3">
+                      <Col xs={12} md={6}>
                         <FloatingLabel controlId="rngOffset" label="Rng Offset" className="mb-3">
                           <Form.Control
                             value={formState.rngOffset}
                             onChange={(e) => handleChange('rngOffset', e.target.value)}
-                          ></Form.Control>
-                        </FloatingLabel>
-                      </td>
-                      <td>
-                        <ReactMarkdown>{cli['RngOffset']}</ReactMarkdown>
-                      </td>
-                    </tr>
-                  )}
-
-                  {/* Seeds */}
-                  {formState.advancedOptions && (
-                    <tr>
-                      <td>
-                        <FloatingLabel controlId="seeds" label="Seeds" className="mb-3">
-                          <Form.Control
-                            value={formState.seeds}
-                            onChange={(e) => handleChange('seeds', e.target.value)}
                           />
                         </FloatingLabel>
-                      </td>
-                      <td>
-                        <ReactMarkdown>{cli['Seeds']}</ReactMarkdown>
-                      </td>
-                    </tr>
-                  )}
-                  {formState.uncommonOptions && (
-                    <tr>
-                      <td>
+                      </Col>
+                      <Col xs={12} md={6} className="mt-2 mt-md-0">
+                        <ReactMarkdown>{cli['RngOffset']}</ReactMarkdown>
+                      </Col>
+                    </Row>
+                  </>
+                )}
+
+                {formState.advancedOptions && (
+                  <Row className="align-items-center mb-3">
+                    <Col xs={12} md={6}>
+                      <FloatingLabel controlId="seeds" label="Seeds" className="mb-3">
+                        <Form.Control value={formState.seeds} onChange={(e) => handleChange('seeds', e.target.value)} />
+                      </FloatingLabel>
+                    </Col>
+                    <Col xs={12} md={6} className="mt-2 mt-md-0">
+                      <ReactMarkdown>{cli['Seeds']}</ReactMarkdown>
+                    </Col>
+                  </Row>
+                )}
+
+                {formState.uncommonOptions && (
+                  <>
+                    <Row className="align-items-center mb-3">
+                      <Col xs={12} md={6}>
                         <FloatingLabel
                           controlId="seed3Byte1MaskCounts"
                           label="Seed 3 Byte 1 Mask Counts"
@@ -1799,15 +1770,14 @@ const PerfectHashForm = () => {
                             onChange={(e) => handleChange('seed3Byte1MaskCounts', e.target.value)}
                           />
                         </FloatingLabel>
-                      </td>
-                      <td>
+                      </Col>
+                      <Col xs={12} md={6} className="mt-2 mt-md-0">
                         <ReactMarkdown>{cli['Seed3Byte1MaskCounts']}</ReactMarkdown>
-                      </td>
-                    </tr>
-                  )}
-                  {formState.uncommonOptions && (
-                    <tr>
-                      <td>
+                      </Col>
+                    </Row>
+
+                    <Row className="align-items-center mb-3">
+                      <Col xs={12} md={6}>
                         <FloatingLabel
                           controlId="seed3Byte2MaskCounts"
                           label="Seed 3 Byte 2 Mask Counts"
@@ -1818,30 +1788,28 @@ const PerfectHashForm = () => {
                             onChange={(e) => handleChange('seed3Byte2MaskCounts', e.target.value)}
                           />
                         </FloatingLabel>
-                      </td>
-                      <td>
+                      </Col>
+                      <Col xs={12} md={6} className="mt-2 mt-md-0">
                         <ReactMarkdown>{cli['Seed3Byte2MaskCounts']}</ReactMarkdown>
-                      </td>
-                    </tr>
-                  )}
-                  {formState.uncommonOptions && (
-                    <tr>
-                      <td>
+                      </Col>
+                    </Row>
+
+                    <Row className="align-items-center mb-3">
+                      <Col xs={12} md={6}>
                         <FloatingLabel controlId="solutionsFoundRatio" label="Solutions Found Ratio" className="mb-3">
                           <Form.Control
                             value={formState.solutionsFoundRatio}
                             onChange={(e) => handleChange('solutionsFoundRatio', e.target.value)}
                           />
                         </FloatingLabel>
-                      </td>
-                      <td>
+                      </Col>
+                      <Col xs={12} md={6} className="mt-2 mt-md-0">
                         <ReactMarkdown>{cli['SolutionsFoundRatio']}</ReactMarkdown>
-                      </td>
-                    </tr>
-                  )}
-                  {formState.uncommonOptions && (
-                    <tr>
-                      <td>
+                      </Col>
+                    </Row>
+
+                    <Row className="align-items-center mb-3">
+                      <Col xs={12} md={6}>
                         <FloatingLabel
                           controlId="attemptsBeforeTableResize"
                           label="Attempts Before Table Resize"
@@ -1852,15 +1820,14 @@ const PerfectHashForm = () => {
                             onChange={(e) => handleChange('attemptsBeforeTableResize', e.target.value)}
                           />
                         </FloatingLabel>
-                      </td>
-                      <td>
+                      </Col>
+                      <Col xs={12} md={6} className="mt-2 mt-md-0">
                         <ReactMarkdown>{cli['AttemptsBeforeTableResize']}</ReactMarkdown>
-                      </td>
-                    </tr>
-                  )}
-                  {formState.uncommonOptions && (
-                    <tr>
-                      <td>
+                      </Col>
+                    </Row>
+
+                    <Row className="align-items-center mb-3">
+                      <Col xs={12} md={6}>
                         <FloatingLabel
                           controlId="maxNumberOfTableResizes"
                           label="Max Number Of Table Resizes"
@@ -1871,30 +1838,28 @@ const PerfectHashForm = () => {
                             onChange={(e) => handleChange('maxNumberOfTableResizes', e.target.value)}
                           />
                         </FloatingLabel>
-                      </td>
-                      <td>
+                      </Col>
+                      <Col xs={12} md={6} className="mt-2 mt-md-0">
                         <ReactMarkdown>{cli['MaxNumberOfTableResizes']}</ReactMarkdown>
-                      </td>
-                    </tr>
-                  )}
-                  {formState.uncommonOptions && (
-                    <tr>
-                      <td>
+                      </Col>
+                    </Row>
+
+                    <Row className="align-items-center mb-3">
+                      <Col xs={12} md={6}>
                         <FloatingLabel controlId="initialNumberOfTableResizes" label="Initial Number Of Table Resizes">
                           <Form.Control
                             value={formState.initialNumberOfTableResizes}
                             onChange={(e) => handleChange('initialNumberOfTableResizes', e.target.value)}
                           />
                         </FloatingLabel>
-                      </td>
-                      <td>
+                      </Col>
+                      <Col xs={12} md={6} className="mt-2 mt-md-0">
                         <ReactMarkdown>{cli['InitialNumberOfTableResizes']}</ReactMarkdown>
-                      </td>
-                    </tr>
-                  )}
-                  {formState.uncommonOptions && (
-                    <tr>
-                      <td>
+                      </Col>
+                    </Row>
+
+                    <Row className="align-items-center mb-3">
+                      <Col xs={12} md={6}>
                         <FloatingLabel
                           controlId="autoResizeWhenKeysToEdgesRatioExceeds"
                           label="Auto Resize When Keys-To-Edges Ratio Exceeds"
@@ -1904,15 +1869,14 @@ const PerfectHashForm = () => {
                             onChange={(e) => handleChange('autoResizeWhenKeysToEdgesRatioExceeds', e.target.value)}
                           />
                         </FloatingLabel>
-                      </td>
-                      <td>
+                      </Col>
+                      <Col xs={12} md={6} className="mt-2 mt-md-0">
                         <ReactMarkdown>{cli['AutoResizeWhenKeysToEdgesRatioExceeds']}</ReactMarkdown>
-                      </td>
-                    </tr>
-                  )}
-                  {formState.uncommonOptions && (
-                    <tr>
-                      <td>
+                      </Col>
+                    </Row>
+
+                    <Row className="align-items-center mb-3">
+                      <Col xs={12} md={6}>
                         <FloatingLabel controlId="mainWorkThreadpoolPriority" label="Main Work Threadpool Priority">
                           <Form.Select
                             value={formState.mainWorkThreadpoolPriority}
@@ -1926,15 +1890,14 @@ const PerfectHashForm = () => {
                             ))}
                           </Form.Select>
                         </FloatingLabel>
-                      </td>
-                      <td>
+                      </Col>
+                      <Col xs={12} md={6} className="mt-2 mt-md-0">
                         <ReactMarkdown>{cli['MainWorkThreadpoolPriority']}</ReactMarkdown>
-                      </td>
-                    </tr>
-                  )}
-                  {formState.uncommonOptions && (
-                    <tr>
-                      <td>
+                      </Col>
+                    </Row>
+
+                    <Row className="align-items-center mb-3">
+                      <Col xs={12} md={6}>
                         <FloatingLabel controlId="fileWorkThreadpoolPriority" label="File Work Threadpool Priority">
                           <Form.Select
                             value={formState.fileWorkThreadpoolPriority}
@@ -1948,17 +1911,18 @@ const PerfectHashForm = () => {
                             ))}
                           </Form.Select>
                         </FloatingLabel>
-                      </td>
-                      <td>
+                      </Col>
+                      <Col xs={12} md={6} className="mt-2 mt-md-0">
                         <ReactMarkdown>{cli['FileWorkThreadpoolPriority']}</ReactMarkdown>
-                      </td>
-                    </tr>
-                  )}
+                      </Col>
+                    </Row>
+                  </>
+                )}
 
-                  {/* FunctionHookCallbackDllPath */}
-                  {formState.platform === 'Windows' && formState.uncommonOptions && (
-                    <tr>
-                      <td>
+                {formState.platform === 'Windows' && formState.uncommonOptions && (
+                  <>
+                    <Row className="align-items-center mb-3">
+                      <Col xs={12} md={6}>
                         <FloatingLabel
                           controlId="functionHookCallbackDllPath"
                           label="Function Hook Callback Dll Path"
@@ -1969,17 +1933,14 @@ const PerfectHashForm = () => {
                             onChange={(e) => handleChange('functionHookCallbackDllPath', e.target.value)}
                           />
                         </FloatingLabel>
-                      </td>
-                      <td>
+                      </Col>
+                      <Col xs={12} md={6} className="mt-2 mt-md-0">
                         <ReactMarkdown>{cli['FunctionHookCallbackDllPath']}</ReactMarkdown>
-                      </td>
-                    </tr>
-                  )}
+                      </Col>
+                    </Row>
 
-                  {/* FunctionHookCallbackFunctionName */}
-                  {formState.platform === 'Windows' && formState.uncommonOptions && (
-                    <tr>
-                      <td>
+                    <Row className="align-items-center mb-3">
+                      <Col xs={12} md={6}>
                         <FloatingLabel
                           controlId="functionHookCallbackFunctionName"
                           label="Function Hook Callback Function Name"
@@ -1990,17 +1951,14 @@ const PerfectHashForm = () => {
                             onChange={(e) => handleChange('functionHookCallbackFunctionName', e.target.value)}
                           />
                         </FloatingLabel>
-                      </td>
-                      <td>
+                      </Col>
+                      <Col xs={12} md={6} className="mt-2 mt-md-0">
                         <ReactMarkdown>{cli['FunctionHookCallbackFunctionName']}</ReactMarkdown>
-                      </td>
-                    </tr>
-                  )}
+                      </Col>
+                    </Row>
 
-                  {/* FunctionHookCallbackIgnoreRip */}
-                  {formState.platform === 'Windows' && formState.uncommonOptions && (
-                    <tr>
-                      <td>
+                    <Row className="align-items-center mb-3">
+                      <Col xs={12} md={6}>
                         <FloatingLabel
                           controlId="functionHookCallbackIgnoreRip"
                           label="Function Hook Callback Ignore RIP"
@@ -2011,14 +1969,14 @@ const PerfectHashForm = () => {
                             onChange={(e) => handleChange('functionHookCallbackIgnoreRip', e.target.value)}
                           />
                         </FloatingLabel>
-                      </td>
-                      <td>
+                      </Col>
+                      <Col xs={12} md={6} className="mt-2 mt-md-0">
                         <ReactMarkdown>{cli['FunctionHookCallbackIgnoreRip']}</ReactMarkdown>
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </Table>
+                      </Col>
+                    </Row>
+                  </>
+                )}
+              </div>
             </Accordion.Body>
           </Accordion.Item>
         </Accordion>
