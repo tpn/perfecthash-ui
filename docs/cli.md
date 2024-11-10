@@ -597,16 +597,12 @@ permitted by the value of `--MaxNumberOfTableResizes`).
 Defaults to `MAX_ULONG` (i.e. `4,294,967,295`), which effectively disables
 table resizing.
 
-See also: [Table Resizing](#table-resizing).
-
 **Note:** Windows only.
 
 ## MaxNumberOfTableResizes
 
 Maximum number of table resizes that will be permitted before giving up and
 concluding that a solution cannot be found.  Defaults to `5`.
-
-See also: [Table Resizing](#table-resizing).
 
 **Note:** Windows only.
 
