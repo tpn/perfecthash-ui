@@ -522,6 +522,14 @@ compiled perfect hash table generated files will still use the appropriate
 `USHORT` C-types if applicable (number of vertices less than or equal to
 65,534).
 
+## TryUsePredictedAttemptsToLimitMaxConcurrency
+
+When present, the maximum concurrency used when solving will be the minimum
+of the predicted attempts and the maximum concurrency indicated on the
+command line.
+
+See also: `--SolutionsFoundRatio`.
+
 # Table Create Parameters
 
 ## GraphImpl
@@ -647,23 +655,53 @@ with the winning coverage predicate.
 
 **Note:** The following predicates only apply to `--GraphImpl=1|2`:
 
-- HighestMaxGraphTraversalDepth
-- LowestMaxGraphTraversalDepth
-- HighestTotalGraphTraversals
-- LowestTotalGraphTraversals
-- HighestNumberOfCollisionsDuringAssignment
-- LowestNumberOfCollisionsDuringAssignment
+- `HighestMaxGraphTraversalDepth`
+- `LowestMaxGraphTraversalDepth`
+- `HighestTotalGraphTraversals`
+- `LowestTotalGraphTraversals`
+- `HighestNumberOfCollisionsDuringAssignment`
+- `LowestNumberOfCollisionsDuringAssignment`
 
-**Note:** The following predicates only apply when `--KeysSubset` is used:
+## KeysSubset
 
-- HighestMaxAssignedPerCacheLineCountForKeysSubset
-- LowestMaxAssignedPerCacheLineCountForKeysSubset
-- HighestNumberOfCacheLinesUsedByKeysSubset
-- LowestNumberOfCacheLinesUsedByKeysSubset
-- HighestNumberOfLargePagesUsedByKeysSubset
-- LowestNumberOfLargePagesUsedByKeysSubset
-- HighestNumberOfPagesUsedByKeysSubset
-- LowestNumberOfPagesUsedByKeysSubset
+Supplies a comma-separated list of keys in ascending key-value order.  Must
+contain two or more elements.  This parameter is only useful when combined
+with one of the following `--BestCoverageType` predicates that are exclusive
+to this mode:
+
+- `HighestMaxAssignedPerCacheLineCountForKeysSubset`
+- `LowestMaxAssignedPerCacheLineCountForKeysSubset`
+- `HighestNumberOfCacheLinesUsedByKeysSubset`
+- `LowestNumberOfCacheLinesUsedByKeysSubset`
+- `HighestNumberOfLargePagesUsedByKeysSubset`
+- `LowestNumberOfLargePagesUsedByKeysSubset`
+- `HighestNumberOfPagesUsedByKeysSubset`
+- `LowestNumberOfPagesUsedByKeysSubset`
+
+It is intended to cover scenarios where the runtime behavior of a perfect
+hash table exhibits highly-skewed cardinality distributions; that is, a
+small number of keys are accessed much more frequently than the rest.
+
+If you know apriori which keys are accessed most frequently, you can supply
+them as a keys subset here, then select a best coverage type predicate that
+will try to find the best solution, for example, that minimizes the number
+of cache lines used by the keys subset.  This would mean the most frequently
+occurring keys occupy the fewest cache lines, which would result in more
+cache lines being available for other data.  In this case, you'd use:
+
+`--KeysSubset=50,70,... --BestCoverageType=LowestNumberOfCacheLinesUsedByKeysSubset`
+
+Alternatively, you may want to maximize the number of cache lines used by
+the most frequent keys, perhaps if some sort of interlocked operation is
+performed once the key index is obtained.  Having multiple threads attempt
+interlocked operations on the same cache line can result in severe performance
+degradation.  In this case, you'd use:
+
+`--KeysSubset=50,70,... --BestCoverageType=HighestNumberOfCacheLinesUsedByKeysSubset`
+
+The number of keys in the subset is limited to command line parameter length
+restrictions.  There is not currently a way to provide key subsets via a
+file.
 
 ## MaxNumberOfEqualBestGraphs
 
@@ -682,9 +720,9 @@ empty cache lines.
 This parameter is particularly useful for the *highest* predicates that
 aren't restricted by page or cache line quantities, e.g.:
 
-- HighestMaxGraphTraversalDepth
-- HighestTotalGraphTraversals
-- HighestNumberOfCollisionsDuringAssignment
+- `HighestMaxGraphTraversalDepth`
+- `HighestTotalGraphTraversals`
+- `HighestNumberOfCollisionsDuringAssignment`
 
 However, it's still useful for all other predicates as a mechanism for
 avoiding never solving a graph (because you never hit the Nth best graph
@@ -787,4 +825,156 @@ Higher values will result in much longer runtimes.  Too high a value, and
 the routine may never return.  `5` is a good starting point for most key
 sets; it is not recommended to go above `10` without good reason for a given
 coverage type predicate.
+
+## Seeds
+
+Supplies an optional comma-separated list of up to 8 integers that
+represent the seed values to use for every graph solving attempt.
+Each value may be zero, which tells the algorithm to use a random
+seed for this position as per normal.
+
+The logic is also cognizant of the hash function's seed masks, e.g.
+`MultiplyShiftR` has a seed mask of `0x1f1f` for seed 3 (which is used to
+control the final right shift amount), so, if we use the following:
+
+`--Seeds=0,0,0x1000`
+
+It will use random bytes for the first two seeds.  For the second byte
+of the third seed, it'll use `0x10` (as `4096` is `0x1000` in hex), but will
+use a random byte for the first byte.  (If we were to use `--Seeds=0,0,16`,
+then the first byte will be locked to `0x10` and the second byte will be
+random.)
+
+This has proven useful for the hash function `MultiplyShiftR` when using
+`--InitialNumberOfTableResizes=1 --Seeds=0,0,0x1010` as it forces all
+vertices to be constrained to the first half of the assigned array
+(thus negating the overhead of a table resize).  It may be useful in
+other contexts, too.
+
+**Note:** Either hex or decimal can be used for the seed values.
+
+## Seed3Byte1MaskCounts
+
+Supplies a comma-separated list of 32 integers that represent weighted
+counts of seed 3's first byte mask value.  (Experimental.)
+
+## Seed3Byte2MaskCounts
+
+Supplies a comma-separated list of 32 integers that represent weighted
+counts of seed 3's second byte mask value.  (Experimental.)
+
+## SolutionsFoundRatio
+
+Supplies a double (64-bit) floating point number indicating the ratio
+of solutions found (obtained from a prior run).  This is then used to
+calculate the predicted number of attempts required to solve a given
+graph; when combined with `--TryUsePredictedAttemptsToLimitMaxConcurrency`
+the maximum concurrency used when solving will be the minimum of the
+predicted attempts and the maximum concurrency indicated on the command
+line.
+
+See also: `--TryUsePredictedAttemptsToLimitMaxConcurrency`.
+
+## Rng
+
+Supplies the name of a random number generator to use for obtaining the
+random bytes needed as part of graph solving.  Valid values:
+
+`Philox43210`
+
+> Uses the Philox 4x32 10-round pseudo-RNG.  This is the default.
+> This should be used when benchmarking creation performance, as
+> it ensures the random numbers fed to each graph solving attempt
+> are identical between runs, resulting in consistent runtimes
+> across subsequent runs.  It may result in slower solving times
+> versus the System RNG, depending on your key set.
+
+`System`
+
+> Uses the standard operating system facilities for obtaining
+> random data.  All other --Rng* parameters are ignored.  This
+> should be used when attempting to find legitimate solutions,
+> however, due to the inherent randomness, will result in varying
+> runtimes across subsequent runs.
+
+## RngSeed
+
+Supplies a 64-bit seed used to initialize the RNG.  Defaults to
+`0x2019090319811025`, unless `--RngUseRandomStartSeed` is supplied (in which
+case, a random seed will be used, obtained via the operating system).
+
+**Note:** Only applies to `Philox43210` RNG.
+
+## RngSubsequence
+
+Supplies the initial subsequence used by the RNG.  The first graph will
+use this sequence, with each additional graph adding 1 to this value for
+their subsequence.  This ensures parallel graphs generate different
+random numbers (even if the seed is identical) when solving.  (Defaults
+to 0.)
+
+**Note:** Only applies to `Philox43210` RNG.
+
+## RngOffset
+
+Supplies the initial offset used by the RNG.  (Defaults to 0.)
+
+**Note:** Only applies to `Philox43210` RNG.
+
+## Remark
+
+Supplies a remark to be associated with the run that will be included
+in the .csv output files under the `Remark` column.  An error will
+be returned if the provided string contains commas (as this will
+break the `.csv` output).
+
+## MaxSolveTimeInSeconds
+
+Supplies the maximum number of seconds to try and solve an individual
+graph.  If a solution is not found within this time, the routine will
+return with an error.  In *Bulk Create* mode, the program will move onto the
+next keys file.
+
+This is useful for ensuring that the routine doesn't get stuck on a single
+key set for an extended period of time.
+
+## FunctionHookCallbackDllPath
+
+Supplies a fully-qualified path to a `.dll` file that will be used as the
+callback handler for hooked functions.
+
+**Note:** Windows only.
+
+## FunctionHookCallbackFunctionName
+
+Supplies the exported function name to resolve from the callback module
+(above) and use as the callback for hooked functions.  The default is
+`InterlockedIncrement`.
+
+**Note:** Windows only.
+
+## FunctionHookCallbackIgnoreRip
+
+Supplies a relative RIP to ignore during function callback.  That is,
+if a caller matches the supplied relative RIP, the function callback
+will not be executed.
+
+**Note:** Windows only.
+
+# Console Output Character Legend
+
+| Char | Meaning |
+|------|---------|
+| .    | Table created successfully. |
+| +    | Table resize event occurred. |
+| x    | Failed to create a table. The maximum number of attempts at trying to solve the table at a given size was reached, and no more resize attempts were possible (due to the maximum resize limit also being hit). |
+| F    | Failed to create a table due to a target not being reached by a specific number of attempts. |
+| *    | None of the worker threads were able to allocate sufficient memory to attempt solving the graph. |
+| !    | The system is out of memory. |
+| L    | The system is running low on memory (a low memory event is triggered at about 90% RAM usage). In certain situations, we can detect this situation prior to actually running out of memory; in these cases, we abort the current table creation attempt (which will instantly relieve system memory pressure). |
+| V    | The graph was created successfully, however, we weren't able to allocate enough memory for the table values array in order for the array to be used after creation. This can be avoided by supplying the command line parameter --SkipTestAfterCreate. |
+| T    | The requested number of table elements was too large. |
+| S    | A shutdown event was received. This shouldn't be seen unless externally signaling the named shutdown event associated with a context. |
+| t    | The solve timeout was reached before a solution was found. |
+| ?    | The error code isn't recognized! E-mail trent@trent.me with details. |
 

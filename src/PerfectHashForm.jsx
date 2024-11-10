@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
@@ -14,6 +15,7 @@ import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import { useImmer } from 'use-immer';
 
 import { z } from 'zod';
+import { Card } from 'react-bootstrap';
 
 // Helper function to format the current date and time
 const getCurrentDateTimeString = () => {
@@ -231,7 +233,7 @@ const initialFormStateGeneric = {
   initialNumberOfTableResizes: 0,
   autoResizeWhenKeysToEdgesRatioExceeds: 0.0,
   bestCoverageAttempts: 5,
-  bestCoverageType: 'HighestScore',
+  bestCoverageType: 'HighestRank',
   maxNumberOfEqualBestGraphs: 3,
   minNumberOfKeysForFindBestGraph: 512,
   bestCoverageTargetValue: null,
@@ -452,6 +454,11 @@ const generateCommand = (formState) => {
   return command;
 };
 
+const isKeysSubsetBestCoverageType = (formState) => {
+  /* If formState.bestCoverageType ends with 'KeysSubset', return true. */
+  return formState.bestCoverageType && formState.bestCoverageType.endsWith('KeysSubset') ? true : false;
+};
+
 const PerfectHashForm = () => {
   const [formState, updateFormState] = useImmer(initialFormStateWindows);
 
@@ -490,6 +497,7 @@ const PerfectHashForm = () => {
 
   const advancedRef = useRef(null);
   const uncommonRef = useRef(null);
+  const consoleLegendRef = useRef(null);
 
   useEffect(() => {
     fetch(`${import.meta.env.BASE_URL}cli.md`)
@@ -539,7 +547,6 @@ const PerfectHashForm = () => {
       <Container className="perfecthash-form">
         <Row className="g-2">
           <Col md>
-            {/* Platform Select */}
             <FloatingLabel controlId="platformSelect" label="Platform" className="mb-3">
               <Form.Select value={formState.platform} onChange={(e) => handleChange('platform', e.target.value)}>
                 <option value="Windows">Windows</option>
@@ -548,7 +555,6 @@ const PerfectHashForm = () => {
             </FloatingLabel>
           </Col>
           <Col md>
-            {/* Executable Type Select */}
             <FloatingLabel controlId="exeTypeSelect" label="Executable Type" className="mb-3">
               <Form.Select value={formState.exeType} onChange={(e) => handleChange('exeType', e.target.value)}>
                 <option value="Create">Create</option>
@@ -580,7 +586,6 @@ const PerfectHashForm = () => {
           </Col>
         </Row>
 
-        {/* Conditionally Render Keys Path or Keys Directory Based on exeType */}
         {formState.exeType === 'Create' && (
           <FloatingLabel controlId="keysPath" label="Keys Path" className="mb-3">
             <Form.Control
@@ -602,9 +607,7 @@ const PerfectHashForm = () => {
             />
           </FloatingLabel>
         )}
-        {/* Additional fields following similar structure */}
 
-        {/* Output Directory */}
         <FloatingLabel controlId="outputDirectory" label="Output Directory" className="mb-3">
           <Form.Control
             type="text"
@@ -674,8 +677,185 @@ const PerfectHashForm = () => {
           </Col>
         </Row>
 
+        <Accordion defaultActiveKey={['0']} alwaysOpen>
+          <Accordion.Item eventKey="0">
+            <Accordion.Header>Table Creation Type</Accordion.Header>
+            <Accordion.Body>
+              <Table borderless className="w-100 table-2c-custom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <Form.Check
+                        disabled
+                        type="checkbox"
+                        label="First Graph Wins"
+                        checked={!formState.findBestGraph}
+                        id="disabled-default-checkbox"
+                      />
+                    </td>
+                    <td>
+                      <ReactMarkdown>{cli['FirstGraphWins']}</ReactMarkdown>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td>
+                      <Form.Check
+                        type="checkbox"
+                        label="Find Best Graph"
+                        id="findBestGraph"
+                        checked={formState.findBestGraph}
+                        onChange={(e) => handleChange('findBestGraph', e.target.checked)}
+                      />
+                    </td>
+                    <td>
+                      <ReactMarkdown>{cli['FindBestGraph']}</ReactMarkdown>
+                    </td>
+                  </tr>
+                </tbody>
+              </Table>
+            </Accordion.Body>
+          </Accordion.Item>
+        </Accordion>
+
+        {formState.findBestGraph && (
+          <Accordion defaultActiveKey={['0']} alwaysOpen>
+            <Accordion.Item eventKey="0">
+              <Accordion.Header>Best Graph Parameters</Accordion.Header>
+              <Accordion.Body>
+                <Table borderless className="w-100 table-2c-custom">
+                  <tbody>
+                    <tr>
+                      <td>
+                        <FloatingLabel controlId="bestCoverageType" label="Best Coverage Type" className="mb-3">
+                          <Form.Select
+                            value={formState.bestCoverageType}
+                            onChange={(e) => handleChange('bestCoverageType', e.target.value)}
+                          >
+                            {/* Dynamically generate options from the Zod schema */}
+                            {formSchema.shape.bestCoverageType.options.map((option) => (
+                              <option key={option} value={option}>
+                                {option}
+                              </option>
+                            ))}
+                          </Form.Select>
+                        </FloatingLabel>
+                      </td>
+                      <td>
+                        <ReactMarkdown>{cli['BestCoverageType']}</ReactMarkdown>
+                      </td>
+                    </tr>
+                    {/* KeysSubset */}
+                    {formState.exeType === 'Create' && isKeysSubsetBestCoverageType(formState) && (
+                      <tr>
+                        <td>
+                          <FloatingLabel controlId="keysSubset" label="Keys Subset">
+                            <Form.Control
+                              value={formState.keysSubset}
+                              onChange={(e) => handleChange('keysSubset', e.target.value)}
+                            />
+                          </FloatingLabel>
+                        </td>
+                        <td>
+                          <ReactMarkdown>{cli['KeysSubset']}</ReactMarkdown>
+                        </td>
+                      </tr>
+                    )}
+                    <tr>
+                      <td>
+                        <FloatingLabel controlId="bestCoverageAttempts" label="Best Coverage Attempts" className="mb-3">
+                          <Form.Control
+                            value={formState.bestCoverageAttempts}
+                            onChange={(e) => handleChange('bestCoverageAttempts', e.target.value)}
+                          />
+                        </FloatingLabel>
+                      </td>
+                      <td>
+                        <ReactMarkdown>{cli['BestCoverageAttempts']}</ReactMarkdown>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <FloatingLabel
+                          controlId="bestCoverageTargetValue"
+                          label="Best Coverage Target Value"
+                          className="mb-3"
+                        >
+                          <Form.Control
+                            value={formState.bestCoverageTargetValue}
+                            onChange={(e) => handleChange('bestCoverageTargetValue', e.target.value)}
+                          />
+                        </FloatingLabel>
+                      </td>
+                      <td>
+                        <ReactMarkdown>{cli['BestCoverageTargetValue']}</ReactMarkdown>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <FloatingLabel controlId="maxNumberOfEqualBestGraphs" label="Max Number Of Equal Best Graphs">
+                          <Form.Control
+                            value={formState.maxNumberOfEqualBestGraphs}
+                            onChange={(e) => handleChange('maxNumberOfEqualBestGraphs', e.target.value)}
+                          />
+                        </FloatingLabel>
+                      </td>
+                      <td>
+                        <ReactMarkdown>{cli['MaxNumberOfEqualBestGraphs']}</ReactMarkdown>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <FloatingLabel
+                          controlId="targetNumberOfSolutions"
+                          label="Target Number Of Solutions"
+                          className="mb-3"
+                        >
+                          <Form.Control
+                            value={formState.targetNumberOfSolutions}
+                            onChange={(e) => handleChange('targetNumberOfSolutions', e.target.value)}
+                          />
+                        </FloatingLabel>
+                      </td>
+                      <td>
+                        <ReactMarkdown>{cli['TargetNumberOfSolutions']}</ReactMarkdown>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <FloatingLabel controlId="maxSolveTimeInSeconds" label="Max Solve Time in Seconds">
+                          <Form.Control
+                            value={formState.maxSolveTimeInSeconds}
+                            onChange={(e) => handleChange('maxSolveTimeInSeconds', e.target.value)}
+                          />
+                        </FloatingLabel>
+                      </td>
+                      <td>
+                        <ReactMarkdown>{cli['MaxSolveTimeInSeconds']}</ReactMarkdown>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <FloatingLabel controlId="fixedAttempts" label="Fixed Attempts">
+                          <Form.Control
+                            value={formState.fixedAttempts}
+                            onChange={(e) => handleChange('fixedAttempts', e.target.value)}
+                          />
+                        </FloatingLabel>
+                      </td>
+                      <td>
+                        <ReactMarkdown>{cli['FixedAttempts']}</ReactMarkdown>
+                      </td>
+                    </tr>
+                  </tbody>
+                </Table>
+              </Accordion.Body>
+            </Accordion.Item>
+          </Accordion>
+        )}
+
         <Form>
-          {formState.advancedOptions && (
+          {formState.uncommonOptions && (
             <Accordion defaultActiveKey={['0']} alwaysOpen>
               <Accordion.Item eventKey="0">
                 <Accordion.Header>Create Flags</Accordion.Header>
@@ -801,36 +981,6 @@ const PerfectHashForm = () => {
               <Accordion.Body>
                 <Table borderless className="w-100 table-2c-custom">
                   <tbody>
-                    <tr>
-                      <td>
-                        <Form.Check
-                          disabled
-                          type="checkbox"
-                          label="First Graph Wins"
-                          checked={!formState.findBestGraph}
-                          id="disabled-default-checkbox"
-                        />
-                      </td>
-                      <td>
-                        <ReactMarkdown>{cli['FirstGraphWins']}</ReactMarkdown>
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td>
-                        <Form.Check
-                          type="checkbox"
-                          label="Find Best Graph"
-                          id="findBestGraph"
-                          checked={formState.findBestGraph}
-                          onChange={(e) => handleChange('findBestGraph', e.target.checked)}
-                        />
-                      </td>
-                      <td>
-                        <ReactMarkdown>{cli['FindBestGraph']}</ReactMarkdown>
-                      </td>
-                    </tr>
-
                     {formState.uncommonOptions && (
                       <tr>
                         <td>
@@ -1275,6 +1425,27 @@ const PerfectHashForm = () => {
                       </>
                     )}
 
+                    {formState.uncommonOptions && (
+                      <>
+                        <tr>
+                          <td>
+                            <Form.Check
+                              type="checkbox"
+                              label="Try Use Predicted Attempts To Limit Concurrency"
+                              id="tryUsePredictedAttemptsToLimitConcurrency"
+                              checked={formState.tryUsePredictedAttemptsToLimitMaxConcurrency}
+                              onChange={(e) =>
+                                handleChange('tryUsePredictedAttemptsToLimitConcurrency', e.target.checked)
+                              }
+                            />
+                          </td>
+                          <td>
+                            <ReactMarkdown>{cli['TryUsePredictedAttemptsToLimitMaxConcurrency']}</ReactMarkdown>
+                          </td>
+                        </tr>
+                      </>
+                    )}
+
                     {formState.advancedOptions && (
                       <>
                         <tr>
@@ -1299,7 +1470,7 @@ const PerfectHashForm = () => {
                         <tr>
                           <td>
                             <Form.Check
-                              disabled="true"
+                              disabled={true}
                               type="checkbox"
                               label="Try Use AVX2 Hash Function"
                               id="tryUseAvx2HashFunction"
@@ -1474,228 +1645,392 @@ const PerfectHashForm = () => {
             <Accordion.Item eventKey="0">
               <Accordion.Header>Table Create Parameters</Accordion.Header>
               <Accordion.Body>
-                <Table borderless className="w-100 table-3c-custom">
+                <Table borderless className="w-100 table-2c-custom">
                   <tbody>
                     <tr>
-                      <td>Graph Implementation</td>
                       <td>
-                        <Form.Select
-                          value={formState.graphImpl}
-                          onChange={(e) => handleChange('graphImpl', e.target.value)}
-                        >
-                          {/* Dynamically generate options from the Zod schema */}
-                          {formSchema.shape.graphImpl.options.map((option) => (
-                            <option key={option} value={option}>
-                              {option}
-                            </option>
-                          ))}
-                        </Form.Select>
+                        <FloatingLabel controlId="graphImpl" label="Graph Implementation" className="mb-3">
+                          <Form.Select
+                            value={formState.graphImpl}
+                            onChange={(e) => handleChange('graphImpl', e.target.value)}
+                          >
+                            {/* Dynamically generate options from the Zod schema */}
+                            {formSchema.shape.graphImpl.options.map((option) => (
+                              <option key={option} value={option}>
+                                {option}
+                              </option>
+                            ))}
+                          </Form.Select>
+                        </FloatingLabel>
                       </td>
                       <td>
                         <ReactMarkdown>{cli['GraphImpl']}</ReactMarkdown>
                       </td>
                     </tr>
+                    {!formState.findBestGraph && (
+                      <>
+                        <tr>
+                          <td>
+                            <FloatingLabel
+                              controlId="maxSolveTimeInSeconds"
+                              label="Max Solve Time in Seconds"
+                              className="mb-3"
+                            >
+                              <Form.Control
+                                value={formState.maxSolveTimeInSeconds}
+                                onChange={(e) => handleChange('maxSolveTimeInSeconds', e.target.value)}
+                              />
+                            </FloatingLabel>
+                          </td>
+                          <td>
+                            <ReactMarkdown>{cli['MaxSolveTimeInSeconds']}</ReactMarkdown>
+                          </td>
+                        </tr>
 
-                    <tr>
-                      <td>Best Coverage Attempts</td>
-                      <td>
-                        <Form.Control
-                          value={formState.bestCoverageAttempts}
-                          onChange={(e) => handleChange('bestCoverageAttempts', e.target.value)}
-                        />
-                      </td>
-                      <td>
-                        <ReactMarkdown>{cli['BestCoverageAttempts']}</ReactMarkdown>
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td>Best Coverage Type</td>
-                      <td>
-                        <Form.Select
-                          value={formState.bestCoverageType}
-                          onChange={(e) => handleChange('bestCoverageType', e.target.value)}
-                        >
-                          {/* Dynamically generate options from the Zod schema */}
-                          {formSchema.shape.bestCoverageType.options.map((option) => (
-                            <option key={option} value={option}>
-                              {option}
-                            </option>
-                          ))}
-                        </Form.Select>
-                      </td>
-                      <td>
-                        <ReactMarkdown>{cli['BestCoverageType']}</ReactMarkdown>
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td>Max Number Of Equal Best Graphs</td>
-                      <td>
-                        <Form.Control
-                          value={formState.maxNumberOfEqualBestGraphs}
-                          onChange={(e) => handleChange('maxNumberOfEqualBestGraphs', e.target.value)}
-                        />
-                      </td>
-                      <td>
-                        <ReactMarkdown>{cli['MaxNumberOfEqualBestGraphs']}</ReactMarkdown>
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td>Best Coverage Target Value</td>
-                      <td>
-                        <Form.Control
-                          value={formState.bestCoverageTargetValue}
-                          onChange={(e) => handleChange('bestCoverageTargetValue', e.target.value)}
-                        />
-                      </td>
-                      <td>
-                        <ReactMarkdown>{cli['BestCoverageTargetValue']}</ReactMarkdown>
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td>Fixed Attempts</td>
-                      <td>
-                        <Form.Control
-                          value={formState.fixedAttempts}
-                          onChange={(e) => handleChange('fixedAttempts', e.target.value)}
-                        />
-                      </td>
-                      <td>
-                        <ReactMarkdown>{cli['FixedAttempts']}</ReactMarkdown>
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td>Target Number Of Solutions</td>
-                      <td>
-                        <Form.Control
-                          value={formState.targetNumberOfSolutions}
-                          onChange={(e) => handleChange('targetNumberOfSolutions', e.target.value)}
-                        />
-                      </td>
-                      <td>
-                        <ReactMarkdown>{cli['TargetNumberOfSolutions']}</ReactMarkdown>
-                      </td>
-                    </tr>
-
+                        <tr>
+                          <td>
+                            <FloatingLabel controlId="fixedAttempts" label="Fixed Attempts" className="mb-3">
+                              <Form.Control
+                                value={formState.fixedAttempts}
+                                onChange={(e) => handleChange('fixedAttempts', e.target.value)}
+                              />
+                            </FloatingLabel>
+                          </td>
+                          <td>
+                            <ReactMarkdown>{cli['FixedAttempts']}</ReactMarkdown>
+                          </td>
+                        </tr>
+                      </>
+                    )}
                     {formState.advancedOptions && (
                       <tr>
-                        <td>Value Size In Bytes</td>
                         <td>
-                          <Form.Control
-                            value={formState.valueSizeInBytes}
-                            onChange={(e) => handleChange('valueSizeInBytes', e.target.value)}
-                          />
+                          <FloatingLabel controlId="valueSizeInBytes" label="Value Size In Bytes" className="mb-3">
+                            <Form.Control
+                              value={formState.valueSizeInBytes}
+                              onChange={(e) => handleChange('valueSizeInBytes', e.target.value)}
+                            />
+                          </FloatingLabel>
                         </td>
                         <td>
                           <ReactMarkdown>{cli['ValueSizeInBytes']}</ReactMarkdown>
                         </td>
                       </tr>
                     )}
+                    {/* Rng */}
+                    <tr>
+                      <td>
+                        <FloatingLabel controlId="rng" label="Rng" className="mb-3">
+                          <Form.Select value={formState.rng} onChange={(e) => handleChange('rng', e.target.value)}>
+                            {/* Dynamically generate options from the Zod schema */}
+                            {formSchema.shape.rng.options.map((option) => (
+                              <option key={option} value={option}>
+                                {option}
+                              </option>
+                            ))}
+                          </Form.Select>
+                        </FloatingLabel>
+                      </td>
+                      <td>
+                        <ReactMarkdown>{cli['Rng']}</ReactMarkdown>
+                      </td>
+                    </tr>
 
+                    {formState.rng === 'Philox43210' && formState.uncommonOptions && (
+                      <tr>
+                        <td>
+                          <FloatingLabel controlId="rngSeed" label="Rng Seed" className="mb-3">
+                            <Form.Control
+                              value={formState.rngSeed}
+                              onChange={(e) => handleChange('rngSeed', e.target.value)}
+                            ></Form.Control>
+                          </FloatingLabel>
+                        </td>
+                        <td>
+                          <ReactMarkdown>{cli['RngSeed']}</ReactMarkdown>
+                        </td>
+                      </tr>
+                    )}
+
+                    {formState.rng === 'Philox43210' && formState.uncommonOptions && (
+                      <tr>
+                        <td>
+                          <FloatingLabel controlId="rngSubsequence" label="Rng Subsequence" className="mb-3">
+                            <Form.Control
+                              value={formState.rngSubsequence}
+                              onChange={(e) => handleChange('rngSubsequence', e.target.value)}
+                            ></Form.Control>
+                          </FloatingLabel>
+                        </td>
+                        <td>
+                          <ReactMarkdown>{cli['RngSubsequence']}</ReactMarkdown>
+                        </td>
+                      </tr>
+                    )}
+
+                    {formState.rng === 'Philox43210' && formState.uncommonOptions && (
+                      <tr>
+                        <td>
+                          <FloatingLabel controlId="rngOffset" label="Rng Offset" className="mb-3">
+                            <Form.Control
+                              value={formState.rngOffset}
+                              onChange={(e) => handleChange('rngOffset', e.target.value)}
+                            ></Form.Control>
+                          </FloatingLabel>
+                        </td>
+                        <td>
+                          <ReactMarkdown>{cli['RngOffset']}</ReactMarkdown>
+                        </td>
+                      </tr>
+                    )}
+
+                    {/* Seeds */}
+                    {formState.advancedOptions && (
+                      <tr>
+                        <td>
+                          <FloatingLabel controlId="seeds" label="Seeds" className="mb-3">
+                            <Form.Control
+                              value={formState.seeds}
+                              onChange={(e) => handleChange('seeds', e.target.value)}
+                            />
+                          </FloatingLabel>
+                        </td>
+                        <td>
+                          <ReactMarkdown>{cli['Seeds']}</ReactMarkdown>
+                        </td>
+                      </tr>
+                    )}
                     {formState.uncommonOptions && (
                       <tr>
-                        <td>Attempts Before Table Resize</td>
                         <td>
-                          <Form.Control
-                            value={formState.attemptsBeforeTableResize}
-                            onChange={(e) => handleChange('attemptsBeforeTableResize', e.target.value)}
-                          />
+                          <FloatingLabel
+                            controlId="seed3Byte1MaskCounts"
+                            label="Seed 3 Byte 1 Mask Counts"
+                            className="mb-3"
+                          >
+                            <Form.Control
+                              value={formState.seed3Byte1MaskCounts}
+                              onChange={(e) => handleChange('seed3Byte1MaskCounts', e.target.value)}
+                            />
+                          </FloatingLabel>
+                        </td>
+                        <td>
+                          <ReactMarkdown>{cli['Seed3Byte1MaskCounts']}</ReactMarkdown>
+                        </td>
+                      </tr>
+                    )}
+                    {formState.uncommonOptions && (
+                      <tr>
+                        <td>
+                          <FloatingLabel
+                            controlId="seed3Byte2MaskCounts"
+                            label="Seed 3 Byte 2 Mask Counts"
+                            className="mb-3"
+                          >
+                            <Form.Control
+                              value={formState.seed3Byte2MaskCounts}
+                              onChange={(e) => handleChange('seed3Byte2MaskCounts', e.target.value)}
+                            />
+                          </FloatingLabel>
+                        </td>
+                        <td>
+                          <ReactMarkdown>{cli['Seed3Byte2MaskCounts']}</ReactMarkdown>
+                        </td>
+                      </tr>
+                    )}
+                    {formState.uncommonOptions && (
+                      <tr>
+                        <td>
+                          <FloatingLabel controlId="solutionsFoundRatio" label="Solutions Found Ratio" className="mb-3">
+                            <Form.Control
+                              value={formState.solutionsFoundRatio}
+                              onChange={(e) => handleChange('solutionsFoundRatio', e.target.value)}
+                            />
+                          </FloatingLabel>
+                        </td>
+                        <td>
+                          <ReactMarkdown>{cli['SolutionsFoundRatio']}</ReactMarkdown>
+                        </td>
+                      </tr>
+                    )}
+                    {formState.uncommonOptions && (
+                      <tr>
+                        <td>
+                          <FloatingLabel
+                            controlId="attemptsBeforeTableResize"
+                            label="Attempts Before Table Resize"
+                            className="mb-3"
+                          >
+                            <Form.Control
+                              value={formState.attemptsBeforeTableResize}
+                              onChange={(e) => handleChange('attemptsBeforeTableResize', e.target.value)}
+                            />
+                          </FloatingLabel>
                         </td>
                         <td>
                           <ReactMarkdown>{cli['AttemptsBeforeTableResize']}</ReactMarkdown>
                         </td>
                       </tr>
                     )}
-
                     {formState.uncommonOptions && (
                       <tr>
-                        <td>Max Number Of Table Resizes</td>
                         <td>
-                          <Form.Control
-                            value={formState.maxNumberOfTableResizes}
-                            onChange={(e) => handleChange('maxNumberOfTableResizes', e.target.value)}
-                          />
+                          <FloatingLabel
+                            controlId="maxNumberOfTableResizes"
+                            label="Max Number Of Table Resizes"
+                            className="mb-3"
+                          >
+                            <Form.Control
+                              value={formState.maxNumberOfTableResizes}
+                              onChange={(e) => handleChange('maxNumberOfTableResizes', e.target.value)}
+                            />
+                          </FloatingLabel>
                         </td>
                         <td>
                           <ReactMarkdown>{cli['MaxNumberOfTableResizes']}</ReactMarkdown>
                         </td>
                       </tr>
                     )}
-
                     {formState.uncommonOptions && (
                       <tr>
-                        <td>Initial Number Of Table Resizes</td>
                         <td>
-                          <Form.Control
-                            value={formState.initialNumberOfTableResizes}
-                            onChange={(e) => handleChange('initialNumberOfTableResizes', e.target.value)}
-                          />
+                          <FloatingLabel
+                            controlId="initialNumberOfTableResizes"
+                            label="Initial Number Of Table Resizes"
+                          >
+                            <Form.Control
+                              value={formState.initialNumberOfTableResizes}
+                              onChange={(e) => handleChange('initialNumberOfTableResizes', e.target.value)}
+                            />
+                          </FloatingLabel>
                         </td>
                         <td>
                           <ReactMarkdown>{cli['InitialNumberOfTableResizes']}</ReactMarkdown>
                         </td>
                       </tr>
                     )}
-
                     {formState.uncommonOptions && (
                       <tr>
-                        <td>Auto Resize When Keys-To-Edges Ratio Exceeds</td>
                         <td>
-                          <Form.Control
-                            value={formState.autoResizeWhenKeysToEdgesRatioExceeds}
-                            onChange={(e) => handleChange('autoResizeWhenKeysToEdgesRatioExceeds', e.target.value)}
-                          />
+                          <FloatingLabel
+                            controlId="autoResizeWhenKeysToEdgesRatioExceeds"
+                            label="Auto Resize When Keys-To-Edges Ratio Exceeds"
+                          >
+                            <Form.Control
+                              value={formState.autoResizeWhenKeysToEdgesRatioExceeds}
+                              onChange={(e) => handleChange('autoResizeWhenKeysToEdgesRatioExceeds', e.target.value)}
+                            />
+                          </FloatingLabel>
                         </td>
                         <td>
                           <ReactMarkdown>{cli['AutoResizeWhenKeysToEdgesRatioExceeds']}</ReactMarkdown>
                         </td>
                       </tr>
                     )}
-
                     {formState.uncommonOptions && (
                       <tr>
-                        <td>Main Work Threadpool Priority</td>
                         <td>
-                          <Form.Select
-                            value={formState.mainWorkThreadpoolPriority}
-                            onChange={(e) => handleChange('mainWorkThreadpoolPriority', e.target.value)}
-                          >
-                            {/* Dynamically generate options from the Zod schema */}
-                            {formSchema.shape.mainWorkThreadpoolPriority.options.map((option) => (
-                              <option key={option} value={option}>
-                                {option}
-                              </option>
-                            ))}
-                          </Form.Select>
+                          <FloatingLabel controlId="mainWorkThreadpoolPriority" label="Main Work Threadpool Priority">
+                            <Form.Select
+                              value={formState.mainWorkThreadpoolPriority}
+                              onChange={(e) => handleChange('mainWorkThreadpoolPriority', e.target.value)}
+                            >
+                              {/* Dynamically generate options from the Zod schema */}
+                              {formSchema.shape.mainWorkThreadpoolPriority.options.map((option) => (
+                                <option key={option} value={option}>
+                                  {option}
+                                </option>
+                              ))}
+                            </Form.Select>
+                          </FloatingLabel>
                         </td>
                         <td>
                           <ReactMarkdown>{cli['MainWorkThreadpoolPriority']}</ReactMarkdown>
                         </td>
                       </tr>
                     )}
-
                     {formState.uncommonOptions && (
                       <tr>
-                        <td>File Work Threadpool Priority</td>
                         <td>
-                          <Form.Select
-                            value={formState.fileWorkThreadpoolPriority}
-                            onChange={(e) => handleChange('fileWorkThreadpoolPriority', e.target.value)}
-                          >
-                            {/* Dynamically generate options from the Zod schema */}
-                            {formSchema.shape.fileWorkThreadpoolPriority.options.map((option) => (
-                              <option key={option} value={option}>
-                                {option}
-                              </option>
-                            ))}
-                          </Form.Select>
+                          <FloatingLabel controlId="fileWorkThreadpoolPriority" label="File Work Threadpool Priority">
+                            <Form.Select
+                              value={formState.fileWorkThreadpoolPriority}
+                              onChange={(e) => handleChange('fileWorkThreadpoolPriority', e.target.value)}
+                            >
+                              {/* Dynamically generate options from the Zod schema */}
+                              {formSchema.shape.fileWorkThreadpoolPriority.options.map((option) => (
+                                <option key={option} value={option}>
+                                  {option}
+                                </option>
+                              ))}
+                            </Form.Select>
+                          </FloatingLabel>
                         </td>
                         <td>
                           <ReactMarkdown>{cli['FileWorkThreadpoolPriority']}</ReactMarkdown>
+                        </td>
+                      </tr>
+                    )}
+
+                    {/* FunctionHookCallbackDllPath */}
+                    {formState.platform === 'Windows' && formState.uncommonOptions && (
+                      <tr>
+                        <td>
+                          <FloatingLabel
+                            controlId="functionHookCallbackDllPath"
+                            label="Function Hook Callback Dll Path"
+                            className="mb-3"
+                          >
+                            <Form.Control
+                              value={formState.functionHookCallbackDllPath}
+                              onChange={(e) => handleChange('functionHookCallbackDllPath', e.target.value)}
+                            />
+                          </FloatingLabel>
+                        </td>
+                        <td>
+                          <ReactMarkdown>{cli['FunctionHookCallbackDllPath']}</ReactMarkdown>
+                        </td>
+                      </tr>
+                    )}
+
+                    {/* FunctionHookCallbackFunctionName */}
+                    {formState.platform === 'Windows' && formState.uncommonOptions && (
+                      <tr>
+                        <td>
+                          <FloatingLabel
+                            controlId="functionHookCallbackFunctionName"
+                            label="Function Hook Callback Function Name"
+                            className="mb-3"
+                          >
+                            <Form.Control
+                              value={formState.functionHookCallbackFunctionName}
+                              onChange={(e) => handleChange('functionHookCallbackFunctionName', e.target.value)}
+                            />
+                          </FloatingLabel>
+                        </td>
+                        <td>
+                          <ReactMarkdown>{cli['FunctionHookCallbackFunctionName']}</ReactMarkdown>
+                        </td>
+                      </tr>
+                    )}
+
+                    {/* FunctionHookCallbackIgnoreRip */}
+                    {formState.platform === 'Windows' && formState.uncommonOptions && (
+                      <tr>
+                        <td>
+                          <FloatingLabel
+                            controlId="functionHookCallbackIgnoreRip"
+                            label="Function Hook Callback Ignore RIP"
+                            className="mb-3"
+                          >
+                            <Form.Control
+                              value={formState.functionHookCallbackIgnoreRip}
+                              onChange={(e) => handleChange('functionHookCallbackIgnoreRip', e.target.value)}
+                            />
+                          </FloatingLabel>
+                        </td>
+                        <td>
+                          <ReactMarkdown>{cli['FunctionHookCallbackIgnoreRip']}</ReactMarkdown>
                         </td>
                       </tr>
                     )}
@@ -1705,6 +2040,42 @@ const PerfectHashForm = () => {
             </Accordion.Item>
           </Accordion>
         </Form>
+
+        <Accordion defaultActiveKey={['0']} alwaysOpen>
+          <Accordion.Item eventKey="0">
+            <Accordion.Header>Console Output Character Legend</Accordion.Header>
+            <Accordion.Body>
+              <Card>
+                <Card.Body>
+                  <Card.Title id="console-output" ref={consoleLegendRef}></Card.Title>
+                  {/* prettier-ignore */}
+                  <Card.Text>
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>{`
+When the program is run in \`--Quiet\` mode, it will print a single character after
+each table creation attempt, according to the following legend:
+
+| Character | Meaning |
+|-----------|---------|
+|\`.\`   | Table created successfully. |
+|\`+\`   | Table resize event occurred. |
+|\`x\`   | Failed to create a table. The maximum number of attempts at trying to solve the table at a given size was reached, and no more resize attempts were possible (due to the maximum resize limit also being hit). |
+|\`F\`   | Failed to create a table due to a target not being reached by a specific number of attempts. |
+|\`*\`   | None of the worker threads were able to allocate sufficient memory to attempt solving the graph. |
+|\`!\`   | The system is out of memory. |
+|\`L\`   | The system is running low on memory (a low memory event is triggered at about 90% RAM usage). In certain situations, we can detect this situation prior to actually running out of memory; in these cases, we abort the current table creation attempt (which will instantly relieve system memory pressure). |
+|\`V\`   | The graph was created successfully, however, we weren't able to allocate enough memory for the table values array in order for the array to be used after creation. This can be avoided by supplying the command line parameter \`--SkipTestAfterCreate\`. |
+|\`T\`   | The requested number of table elements was too large. |
+|\`S\`   | A shutdown event was received. This shouldn't be seen unless externally signaling the named shutdown event associated with a context. |
+|\`t\`   | The solve timeout was reached before a solution was found. |
+|\`?\`   | The error code isn't recognized! E-mail trent@trent.me with details. |
+            `}
+            </ReactMarkdown>
+          </Card.Text>
+                </Card.Body>
+              </Card>
+            </Accordion.Body>
+          </Accordion.Item>
+        </Accordion>
       </Container>
     </>
   );
