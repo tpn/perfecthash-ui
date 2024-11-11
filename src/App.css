@@ -108,41 +108,31 @@
   border-color: #0062cc;
 }
 
-/* Default (light mode) styles */
 .sticky-command-box {
-  position: sticky;
-  bottom: 0;
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%; /* Adjust this if you want the box to be wider/narrower */
   background-color: white;
-  box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+  border: #444444;
   z-index: 1030;
   padding: 1rem;
-  /* Matches Bootstrap's p-3 */
-  margin-top: 1rem;
-  /* Matches Bootstrap's mt-4 */
+}
+
+.command-box {
+  resize: none;
+  overflow: hidden;
+}
+
+/* Optional: Adjust button/link styling for smaller icons */
+.sticky-command-box .btn-link {
+  padding: 0; /* Reduce padding for more compact icon display */
 }
 
 /* Dark mode styles */
 [data-theme="dark"] .sticky-command-box {
   background-color: #333333;
-  box-shadow: 0 -1px 5px rgba(255, 255, 255, 0.1);
-}
-
-/* Form control inside sticky box */
-.sticky-command-box .form-control {
-  height: 150px;
-}
-
-/* Button inside sticky box */
-.sticky-command-box .btn {
-  margin-top: 0.5rem;
-}
-
-.perfecthash-form {
-  padding-top: 30px;
-}
-
-/* Add this CSS to your stylesheet */
-.same-width-left-column {
-  flex-basis: max-content;
-  flex-shrink: 0;
+  box-shadow: 0 1px 5px rgba(255, 255, 255, 0.1);
 }

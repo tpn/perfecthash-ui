@@ -3,19 +3,22 @@ import React, { useState, useEffect, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
-import Button from 'react-bootstrap/Button';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Table from 'react-bootstrap/Table';
-import Form from 'react-bootstrap/Form';
-import Container from 'react-bootstrap/Container';
 import Accordion from 'react-bootstrap/Accordion';
+import Button from 'react-bootstrap/Button';
+import Col from 'react-bootstrap/Col';
+import Container from 'react-bootstrap/Container';
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
+import Form from 'react-bootstrap/Form';
+import Row from 'react-bootstrap/Row';
+import Spinner from 'react-bootstrap/Spinner';
+import Table from 'react-bootstrap/Table';
 
 import { useImmer } from 'use-immer';
 
 import { z } from 'zod';
 import { Card } from 'react-bootstrap';
+
+import Icon from './Icons';
 
 // Helper function to format the current date and time
 const getCurrentDateTimeString = () => {
@@ -30,8 +33,12 @@ const getCurrentDateTimeString = () => {
 };
 
 const formSchema = z.object({
+  floatingCommand: z.boolean(),
+  expandOptions: z.boolean(),
+  autoCopyToClipboard: z.boolean(),
   advancedOptions: z.boolean(),
   uncommonOptions: z.boolean(),
+  includeDefaults: z.boolean(),
   platform: z.enum(['Windows', 'Linux']),
   exeType: z.enum(['Create', 'Bulk Create']),
   keysPath: z.string(),
@@ -117,7 +124,7 @@ const formSchema = z.object({
   attemptsBeforeTableResize: z.number().int().min(0),
   maxNumberOfTableResizes: z.number().int().min(0),
   initialNumberOfTableResizes: z.number().int().min(0),
-  autoResizeWhenKeysToEdgesRatioExceeds: z.number().min(0).max(1),
+  autoResizeWhenKeysToEdgesRatioExceeds: z.number().min(0.0).max(1.0),
   bestCoverageAttempts: z.number().int().min(0),
   bestCoverageType: z.enum([
     'HighestMaxAssignedPerCacheLineCount',
@@ -181,7 +188,12 @@ const formSchema = z.object({
 });
 
 const initialFormStateGeneric = {
+  floatingCommand: true,
+  expandOptions: false,
+  autoCopyToClipboard: true,
   advancedOptions: true,
+  uncommonOptions: false,
+  includeDefaults: false,
   exeType: 'Create',
   algorithm: 'Chm01',
   hashFunction: 'MultiplyShiftR',
@@ -228,10 +240,10 @@ const initialFormStateGeneric = {
   valueSizeInBytes: 4,
   mainWorkThreadpoolPriority: 'Normal',
   fileWorkThreadpoolPriority: 'Normal',
-  attemptsBeforeTableResize: null,
+  attemptsBeforeTableResize: 4294967295,
   maxNumberOfTableResizes: 5,
   initialNumberOfTableResizes: 0,
-  autoResizeWhenKeysToEdgesRatioExceeds: 0.0,
+  autoResizeWhenKeysToEdgesRatioExceeds: 1.0,
   bestCoverageAttempts: 5,
   bestCoverageType: 'HighestRank',
   maxNumberOfEqualBestGraphs: 3,
@@ -242,6 +254,7 @@ const initialFormStateGeneric = {
   fixedAttempts: null,
   seeds: null,
   seed3Byte1MaskCounts: null,
+  seed3Byte2MaskCounts: null,
   solutionsFoundRatio: null,
   rng: 'Philox43210',
   rngSeed: '0x2019090319811025',
@@ -272,8 +285,7 @@ const initialFormStateLinux = {
 
 const generateCommand = (formState) => {
   const {
-    advancedOptions,
-    uncommonOptions,
+    includeDefaults,
     platform,
     exeType,
     keysPath,
@@ -365,6 +377,10 @@ const generateCommand = (formState) => {
     if (condition) command += ` ${flag}`;
   };
 
+  const addDefaultFlag = (flag, condition) => {
+    if (includeDefaults && condition) command += ` ${flag}`;
+  };
+
   addFlag('--SkipTestAfterCreate', skipTestAfterCreate);
   addFlag('--Compile', compile);
   addFlag('--TryLargePagesForKeysData', tryLargePagesForKeysData);
@@ -380,10 +396,12 @@ const generateCommand = (formState) => {
   addFlag('--OmitCsvRowIfTableCreateFailed', omitCsvRowIfTableCreateFailed);
   addFlag('--OmitCsvRowIfTableCreateSucceeded', omitCsvRowIfTableCreateSucceeded);
   addFlag('--IndexOnly', indexOnly);
+  addDefaultFlag('--UseRwsSectionForTableValues', !doNotUseRwsSectionForTableValues);
   addFlag('--DoNotUseRwsSectionForTableValues', doNotUseRwsSectionForTableValues);
   addFlag('--UseNonTemporalAvx2Routines', useNonTemporalAvx2Routines);
   addFlag('--ClampNumberOfEdges', clampNumberOfEdges);
   addFlag('--UseOriginalSeededHashRoutines', useOriginalSeededHashRoutines);
+  addDefaultFlag('--HashAllKeysFirst', !doNotHashAllKeysFirst);
   addFlag('--DoNotHashAllKeysFirst', doNotHashAllKeysFirst);
   addFlag('--EnableWriteCombineForVertexPairs', enableWriteCombineForVertexPairs);
   addFlag('--RemoveWriteCombineAfterSuccessfulHashKeys', removeWriteCombineAfterSuccessfulHashKeys);
@@ -394,23 +412,39 @@ const generateCommand = (formState) => {
   addFlag('--IncludeNumberOfTableResizeEventsInOutputPath', includeNumberOfTableResizeEventsInOutputPath);
   addFlag('--IncludeNumberOfTableElementsInOutputPath', includeNumberOfTableElementsInOutputPath);
   addFlag('--RngUseRandomStartSeed', rngUseRandomStartSeed);
+  addDefaultFlag('--TryUseAvx2HashFunction', !doNotTryUseAvx2HashFunction);
   addFlag('--DoNotTryUseAvx2HashFunction', doNotTryUseAvx2HashFunction);
   addFlag('--TryUseAvx512HashFunction', tryUseAvx512HashFunction);
+  addDefaultFlag('--TryUseAvx2MemoryCoverageFunction', !doNotTryUseAvx2MemoryCoverageFunction);
   addFlag('--DoNotTryUseAvx2MemoryCoverageFunction', doNotTryUseAvx2MemoryCoverageFunction);
+  addDefaultFlag('--IncludeKeysInCompiledDll', !doNotIncludeKeysInCompiledDll);
   addFlag('--DoNotIncludeKeysInCompiledDll', doNotIncludeKeysInCompiledDll);
   addFlag('--DisableSavingCallbackTableValues', disableSavingCallbackTableValues);
   addFlag('--DoNotTryUseHash16Impl', doNotTryUseHash16Impl);
   addFlag('--TryUsePredictedAttemptsToLimitMaxConcurrency', tryUsePredictedAttemptsToLimitMaxConcurrency);
+  addDefaultFlag('--FirstGraphWins', !findBestGraph);
   addFlag('--FindBestGraph', findBestGraph);
 
   const addParam = (param, value, defaultValue) => {
-    // Only append if the value is different from the default.
-    if (value !== null && value !== defaultValue) command += ` ${param}=${value}`;
+    if (!includeDefaults) {
+      if (value !== null && value !== defaultValue) {
+        command += ` ${param}=${value}`;
+      }
+    } else {
+      if (value !== null) {
+        command += ` ${param}=${value}`;
+      }
+    }
   };
 
   const addBestParam = (param, value, defaultValue) => {
-    // Only append if the value is different from the default.
-    if (findBestGraph && value !== null && value !== defaultValue) command += ` ${param}=${value}`;
+    if (!includeDefaults) {
+      // Only append if the value is different from the default.
+      if (findBestGraph && value !== null && value !== defaultValue) command += ` ${param}=${value}`;
+    } else {
+      // Always append the value if it is not null.
+      if (findBestGraph && value !== null) command += ` ${param}=${value}`;
+    }
   };
 
   // Append numeric and string options
@@ -421,7 +455,7 @@ const generateCommand = (formState) => {
   addParam('--AttemptsBeforeTableResize', attemptsBeforeTableResize, 4294967295);
   addParam('--MaxNumberOfTableResizes', maxNumberOfTableResizes, 5);
   addParam('--InitialNumberOfTableResizes', initialNumberOfTableResizes, 0);
-  addParam('--AutoResizeWhenKeysToEdgesRatioExceeds', autoResizeWhenKeysToEdgesRatioExceeds, 0.0);
+  addParam('--AutoResizeWhenKeysToEdgesRatioExceeds', autoResizeWhenKeysToEdgesRatioExceeds, 1.0);
   addBestParam('--BestCoverageAttempts', bestCoverageAttempts, null);
   addBestParam('--BestCoverageType', bestCoverageType, null);
   addBestParam('--MaxNumberOfEqualBestGraphs', maxNumberOfEqualBestGraphs, null);
@@ -459,7 +493,7 @@ const isKeysSubsetBestCoverageType = (formState) => {
   return formState.bestCoverageType && formState.bestCoverageType.endsWith('KeysSubset') ? true : false;
 };
 
-const PerfectHashForm = () => {
+const PerfectHashForm = ({ navbarHeight }) => {
   const [formState, updateFormState] = useImmer(initialFormStateWindows);
 
   // Zod validation (to validate form state)
@@ -531,20 +565,140 @@ const PerfectHashForm = () => {
       });
   }, []);
 
+  const textareaRef = useRef(null);
+  const commandPanelRef = useRef(null);
+
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto'; // Reset height to auto
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`; // Set height based on scroll height
+    }
+  }, [command]); // Re-run effect when command changes
+
+  const [offsetTop, setOffsetTop] = useState(navbarHeight);
+
+  // Adjust offset when pinned.
+  useEffect(() => {
+    if (formState.floatingCommand && commandPanelRef.current) {
+      setOffsetTop(navbarHeight + commandPanelRef.current.offsetHeight);
+    } else {
+      setOffsetTop(navbarHeight);
+    }
+  }, [formState.floatingCommand, commandPanelRef.current, navbarHeight]);
+
+  const [clipboardState, setClipboardState] = useState('idle'); // 'idle', 'checked'
+
+  const handleClipboardClick = () => {
+    if (!formState.autoCopyToClipboard) {
+      setClipboardState('checked');
+      navigator.clipboard.writeText(command).then(() => {
+        setTimeout(() => {
+          setClipboardState('idle');
+        }, 1000);
+      });
+    }
+  };
+
   return (
     <>
-      {/* Sticky Command Box */}
-      <Container className="sticky-command-box p-3 mt-4">
-        <Form.Group>
-          <Form.Label>Generated Command</Form.Label>
-          <Form.Control as="textarea" readOnly value={command} className="command-box" />
-          <Button variant="primary" className="mt-2" onClick={() => navigator.clipboard.writeText(command)}>
-            Copy to Clipboard
-          </Button>
-        </Form.Group>
+      <Container
+        ref={commandPanelRef}
+        className={`command-panel ${formState.floatingCommand ? 'sticky-command-box' : ''} px-1 pt-1 pb-1`}
+        style={formState.floatingCommand ? { top: `${navbarHeight + 10}px`, marginBottom: '1rem' } : {}}
+      >
+        <Row className="align-items-stretch mx-1">
+          {/* Command Textarea */}
+          <Col className="d-flex p-0 mr-1" style={{ flex: 1 }}>
+            <Form.Floating className="flex-grow-1 w-100">
+              <Form.Control
+                ref={textareaRef}
+                as="textarea"
+                readOnly
+                value={command}
+                className="command-box"
+                placeholder="Generated Command"
+              />
+              <label htmlFor="generatedCommand">Generated Command</label>
+            </Form.Floating>
+          </Col>
+
+          {/* Icon Column */}
+          <Col xs="auto" className="d-flex flex-column justify-content-between p-0 mx-1">
+            <Button variant="link" onClick={() => handleChange('floatingCommand', !formState.floatingCommand)}>
+              {formState.floatingCommand ? <Icon.PinFill size={12} /> : <Icon.Pin size={12} />}
+            </Button>
+            <Button variant="link" onClick={() => handleChange('expandOptions', !formState.expandOptions)}>
+              {formState.expandOptions ? <Icon.ChevronUp size={12} /> : <Icon.ChevronDown size={12} />}
+            </Button>
+          </Col>
+        </Row>
+
+        {formState.expandOptions && (
+          <Row className="d-flex align-items-center justify-content-start mt-1 mb-0">
+            {' '}
+            {/* justify-content-start ensures left alignment */}
+            {/* Copy to Clipboard Button */}
+            {/* Options Switches */}
+            <Col xs="auto" className="mx-3">
+              <Form.Check
+                type="switch"
+                id="toggle-auto-copy-to-clipboard"
+                label="Automatically Copy to Clipboard"
+                checked={formState.autoCopyToClipboard}
+                onChange={(e) => handleChange('autoCopyToClipboard', e.target.checked)}
+              />
+            </Col>
+            {!formState.autoCopyToClipboard && (
+              <Col xs="auto" className="p-0 d-flex align-items-center gt-0">
+                <Button
+                  variant="link"
+                  className={`${formState.autoCopyToClipboard ? 'disabled' : ''} d-flex align-items-center`}
+                  onClick={handleClipboardClick}
+                >
+                  {clipboardState === 'checked' ? (
+                    <Icon.ClipboardCheck size={14} className="text-success" /> // Success icon in green
+                  ) : (
+                    <Icon.Clipboard size={14} /> // Default clipboard icon
+                  )}
+                </Button>
+              </Col>
+            )}
+            <Col xs="auto" className="mx-3">
+              <Form.Check
+                type="switch"
+                id="advanced-switch"
+                label="Show Advanced Options"
+                checked={formState.advancedOptions}
+                onChange={(e) => handleChange('advancedOptions', e.target.checked)}
+              />
+            </Col>
+            <Col xs="auto" className="mx-3">
+              <Form.Check
+                type="switch"
+                id="uncommon-switch"
+                label="Show Uncommon Options"
+                checked={formState.uncommonOptions}
+                onChange={(e) => handleChange('uncommonOptions', e.target.checked)}
+              />
+            </Col>
+            <Col xs="auto" className="mx-3">
+              <Form.Check
+                type="switch"
+                id="include-default-switch"
+                label="Include Defaults"
+                checked={formState.includeDefaults}
+                onChange={(e) => handleChange('includeDefaults', e.target.checked)}
+              />
+            </Col>
+          </Row>
+        )}
       </Container>
 
-      <Container className="perfecthash-form">
+      <Container
+        className="perfecthash-form"
+        style={{ paddingTop: formState.floatingCommand ? `${offsetTop - 50}px` : '0' }}
+      >
+        <hr />
         <Row className="g-2">
           <Col md={6} lg={4}>
             <FloatingLabel controlId="platformSelect" label="Platform" className="mb-3">
@@ -561,28 +715,6 @@ const PerfectHashForm = () => {
                 <option value="Bulk Create">Bulk Create</option>
               </Form.Select>
             </FloatingLabel>
-          </Col>
-          <Col xs={12} className="d-flex flex-column">
-            <Row className="g-2">
-              <Col>
-                <Form.Check
-                  type="switch"
-                  id="advanced-switch"
-                  label="Show Advanced"
-                  checked={formState.advancedOptions}
-                  onChange={(e) => handleChange('advancedOptions', e.target.checked)}
-                />
-              </Col>
-              <Col>
-                <Form.Check
-                  type="switch"
-                  id="uncommon-switch"
-                  label="Show Uncommon"
-                  checked={formState.uncommonOptions}
-                  onChange={(e) => handleChange('uncommonOptions', e.target.checked)}
-                />
-              </Col>
-            </Row>
           </Col>
         </Row>
 
@@ -672,12 +804,12 @@ const PerfectHashForm = () => {
         </Row>
 
         <Accordion defaultActiveKey={['0']} alwaysOpen>
-          <Accordion.Item eventKey="0">
+          <Accordion.Item eventKey="0" className="mb-3">
             <Accordion.Header>Table Creation Type</Accordion.Header>
             <Accordion.Body>
               <div className="d-flex flex-column">
                 {/* First Row */}
-                <Row className="align-items-center mb-3">
+                <Row className="align-items-center mb-3 border-bottom-thin">
                   <Col xs={12} md={4}>
                     <Form.Check
                       disabled
@@ -693,7 +825,7 @@ const PerfectHashForm = () => {
                 </Row>
 
                 {/* Second Row */}
-                <Row className="align-items-center mb-3">
+                <Row className="align-items-center mb-3 border-bottom-thin">
                   <Col xs={12} md={4}>
                     <Form.Check
                       type="checkbox"
@@ -714,11 +846,11 @@ const PerfectHashForm = () => {
 
         {formState.findBestGraph && (
           <Accordion defaultActiveKey={['0']} alwaysOpen>
-            <Accordion.Item eventKey="0">
+            <Accordion.Item eventKey="0" className="mb-3">
               <Accordion.Header>Best Graph Parameters</Accordion.Header>
               <Accordion.Body>
                 <div className="d-flex flex-column">
-                  <Row className="align-items-center mb-3">
+                  <Row className="align-items-center mb-3 border-bottom-thin">
                     <Col xs={12} md={6}>
                       <FloatingLabel controlId="bestCoverageType" label="Best Coverage Type" className="mb-3">
                         <Form.Select
@@ -740,7 +872,7 @@ const PerfectHashForm = () => {
                   </Row>
 
                   {formState.exeType === 'Create' && isKeysSubsetBestCoverageType(formState) && (
-                    <Row className="align-items-center mb-3">
+                    <Row className="align-items-center mb-3 border-bottom-thin">
                       <Col xs={12} md={6}>
                         <FloatingLabel controlId="keysSubset" label="Keys Subset">
                           <Form.Control
@@ -755,7 +887,7 @@ const PerfectHashForm = () => {
                     </Row>
                   )}
 
-                  <Row className="align-items-center mb-3">
+                  <Row className="align-items-center mb-3 border-bottom-thin">
                     <Col xs={12} md={6}>
                       <FloatingLabel controlId="bestCoverageAttempts" label="Best Coverage Attempts" className="mb-3">
                         <Form.Control
@@ -768,7 +900,7 @@ const PerfectHashForm = () => {
                       <ReactMarkdown>{cli['BestCoverageAttempts']}</ReactMarkdown>
                     </Col>
                   </Row>
-                  <Row className="align-items-center mb-3">
+                  <Row className="align-items-center mb-3 border-bottom-thin">
                     <Col xs={12} md={6}>
                       <FloatingLabel
                         controlId="bestCoverageTargetValue"
@@ -785,7 +917,7 @@ const PerfectHashForm = () => {
                       <ReactMarkdown>{cli['BestCoverageTargetValue']}</ReactMarkdown>
                     </Col>
                   </Row>
-                  <Row className="align-items-center mb-3">
+                  <Row className="align-items-center mb-3 border-bottom-thin">
                     <Col xs={12} md={6}>
                       <FloatingLabel controlId="maxNumberOfEqualBestGraphs" label="Max Number Of Equal Best Graphs">
                         <Form.Control
@@ -798,7 +930,7 @@ const PerfectHashForm = () => {
                       <ReactMarkdown>{cli['MaxNumberOfEqualBestGraphs']}</ReactMarkdown>
                     </Col>
                   </Row>
-                  <Row className="align-items-center mb-3">
+                  <Row className="align-items-center mb-3 border-bottom-thin">
                     <Col xs={12} md={6}>
                       <FloatingLabel
                         controlId="targetNumberOfSolutions"
@@ -815,7 +947,7 @@ const PerfectHashForm = () => {
                       <ReactMarkdown>{cli['TargetNumberOfSolutions']}</ReactMarkdown>
                     </Col>
                   </Row>
-                  <Row className="align-items-center mb-3">
+                  <Row className="align-items-center mb-3 border-bottom-thin">
                     <Col xs={12} md={6}>
                       <FloatingLabel controlId="maxSolveTimeInSeconds" label="Max Solve Time in Seconds">
                         <Form.Control
@@ -828,7 +960,7 @@ const PerfectHashForm = () => {
                       <ReactMarkdown>{cli['MaxSolveTimeInSeconds']}</ReactMarkdown>
                     </Col>
                   </Row>
-                  <Row className="align-items-center mb-3">
+                  <Row className="align-items-center mb-3 border-bottom-thin">
                     <Col xs={12} md={6}>
                       <FloatingLabel controlId="fixedAttempts" label="Fixed Attempts">
                         <Form.Control
@@ -849,7 +981,7 @@ const PerfectHashForm = () => {
 
         {formState.uncommonOptions && (
           <Accordion defaultActiveKey={['0']} alwaysOpen>
-            <Accordion.Item eventKey="0">
+            <Accordion.Item eventKey="0" className="mb-3">
               <Accordion.Header>Create Flags</Accordion.Header>
               <Accordion.Body>
                 <Table borderless className="w-100">
@@ -894,12 +1026,12 @@ const PerfectHashForm = () => {
 
         {formState.advancedOptions && (
           <Accordion defaultActiveKey={['0']} alwaysOpen>
-            <Accordion.Item eventKey="0">
+            <Accordion.Item eventKey="0" className="mb-3">
               <Accordion.Header>Keys Load Flags</Accordion.Header>
               <Accordion.Body>
                 <div className="d-flex flex-column">
                   {formState.platform === 'Windows' && (
-                    <Row className="align-items-center mb-3">
+                    <Row className="align-items-center mb-3 border-bottom-thin">
                       <Col xs={12} md={6}>
                         <Form.Check
                           type="checkbox"
@@ -915,7 +1047,7 @@ const PerfectHashForm = () => {
                     </Row>
                   )}
 
-                  <Row className="align-items-center mb-3">
+                  <Row className="align-items-center mb-3 border-bottom-thin">
                     <Col xs={12} md={6}>
                       <Form.Check
                         type="checkbox"
@@ -930,7 +1062,7 @@ const PerfectHashForm = () => {
                     </Col>
                   </Row>
 
-                  <Row className="align-items-center mb-3">
+                  <Row className="align-items-center mb-3 border-bottom-thin">
                     <Col xs={12} md={6}>
                       <Form.Check
                         type="checkbox"
@@ -945,7 +1077,7 @@ const PerfectHashForm = () => {
                     </Col>
                   </Row>
 
-                  <Row className="align-items-center mb-3">
+                  <Row className="align-items-center mb-3 border-bottom-thin">
                     <Col xs={12} md={6}>
                       <Form.Check
                         type="checkbox"
@@ -966,12 +1098,12 @@ const PerfectHashForm = () => {
         )}
 
         <Accordion defaultActiveKey={['0']} alwaysOpen>
-          <Accordion.Item eventKey="0">
+          <Accordion.Item eventKey="0" className="mb-3">
             <Accordion.Header>Table Create Flags</Accordion.Header>
             <Accordion.Body>
               <div className="d-flex flex-column">
                 {formState.uncommonOptions && (
-                  <Row className="align-items-center mb-3">
+                  <Row className="align-items-center mb-3 border-bottom-thin">
                     <Col xs={12} md={6}>
                       <Form.Check
                         type="checkbox"
@@ -987,7 +1119,7 @@ const PerfectHashForm = () => {
                   </Row>
                 )}
 
-                <Row className="align-items-center mb-3">
+                <Row className="align-items-center mb-3 border-bottom-thin">
                   <Col xs={12} md={6}>
                     <Form.Check
                       type="checkbox"
@@ -1002,7 +1134,7 @@ const PerfectHashForm = () => {
                   </Col>
                 </Row>
 
-                <Row className="align-items-center mb-3">
+                <Row className="align-items-center mb-3 border-bottom-thin">
                   <Col xs={12} md={6}>
                     <Form.Check
                       type="checkbox"
@@ -1018,14 +1150,14 @@ const PerfectHashForm = () => {
                 </Row>
 
                 {formState.advancedOptions && (
-                  <Row className="align-items-center mb-3">
+                  <Row className="align-items-center mb-3 border-bottom-thin">
                     <Col xs={12} md={6}>
                       <Form.Check
                         type="checkbox"
                         label="Index Only"
                         id="indexOnly"
                         checked={formState.indexOnly}
-                        onChange={(e) => handleChange('indexONly', e.target.checked)}
+                        onChange={(e) => handleChange('indexOnly', e.target.checked)}
                       />
                     </Col>
                     <Col xs={12} md={6} className="mt-2 mt-md-0">
@@ -1035,7 +1167,7 @@ const PerfectHashForm = () => {
                 )}
 
                 {formState.uncommonOptions && (
-                  <Row className="align-items-center mb-3">
+                  <Row className="align-items-center mb-3 border-bottom-thin">
                     <Col xs={12} md={6}>
                       <Form.Check
                         type="checkbox"
@@ -1053,7 +1185,7 @@ const PerfectHashForm = () => {
 
                 {formState.advancedOptions && (
                   <>
-                    <Row className="align-items-center mb-3">
+                    <Row className="align-items-center mb-3 border-bottom-thin">
                       <Col xs={12} md={6}>
                         <Form.Check
                           disabled
@@ -1067,7 +1199,7 @@ const PerfectHashForm = () => {
                         <ReactMarkdown>{cli['HashAllKeysFirst']}</ReactMarkdown>
                       </Col>
                     </Row>
-                    <Row className="align-items-center mb-3">
+                    <Row className="align-items-center mb-3 border-bottom-thin">
                       <Col xs={12} md={6}>
                         <Form.Check
                           type="checkbox"
@@ -1086,7 +1218,7 @@ const PerfectHashForm = () => {
 
                 {formState.platform === 'Windows' && formState.uncommonOptions && (
                   <>
-                    <Row className="align-items-center mb-3">
+                    <Row className="align-items-center mb-3 border-bottom-thin">
                       <Col xs={12} md={6}>
                         <Form.Check
                           disabled={formState.doNotHashAllKeysFirst}
@@ -1102,7 +1234,7 @@ const PerfectHashForm = () => {
                       </Col>
                     </Row>
 
-                    <Row className="align-items-center mb-3">
+                    <Row className="align-items-center mb-3 border-bottom-thin">
                       <Col xs={12} md={6}>
                         <Form.Check
                           disabled={formState.doNotHashAllKeysFirst}
@@ -1124,7 +1256,7 @@ const PerfectHashForm = () => {
 
                 {formState.platform === 'Windows' && formState.advancedOptions && (
                   <>
-                    <Row className="align-items-center mb-3">
+                    <Row className="align-items-center mb-3 border-bottom-thin">
                       <Col xs={12} md={6}>
                         <Form.Check
                           disabled={formState.doNotHashAllKeysFirst}
@@ -1140,7 +1272,7 @@ const PerfectHashForm = () => {
                       </Col>
                     </Row>
 
-                    <Row className="align-items-center mb-3">
+                    <Row className="align-items-center mb-3 border-bottom-thin">
                       <Col xs={12} md={6}>
                         <Form.Check
                           disabled={formState.doNotHashAllKeysFirst}
@@ -1158,7 +1290,7 @@ const PerfectHashForm = () => {
                       </Col>
                     </Row>
 
-                    <Row className="align-items-center mb-3">
+                    <Row className="align-items-center mb-3 border-bottom-thin">
                       <Col xs={12} md={6}>
                         <Form.Check
                           disabled={formState.doNotHashAllKeysFirst}
@@ -1177,7 +1309,7 @@ const PerfectHashForm = () => {
                 )}
 
                 {formState.uncommonOptions && (
-                  <Row className="align-items-center mb-3">
+                  <Row className="align-items-center mb-3 border-bottom-thin">
                     <Col xs={12} md={6}>
                       <Form.Check
                         type="checkbox"
@@ -1194,7 +1326,7 @@ const PerfectHashForm = () => {
                 )}
 
                 {formState.uncommonOptions && (
-                  <Row className="align-items-center mb-3">
+                  <Row className="align-items-center mb-3 border-bottom-thin">
                     <Col xs={12} md={6}>
                       <Form.Check
                         type="checkbox"
@@ -1211,7 +1343,7 @@ const PerfectHashForm = () => {
                 )}
 
                 {formState.uncommonOptions && (
-                  <Row className="align-items-center mb-3">
+                  <Row className="align-items-center mb-3 border-bottom-thin">
                     <Col xs={12} md={6}>
                       <Form.Check
                         type="checkbox"
@@ -1228,7 +1360,7 @@ const PerfectHashForm = () => {
                 )}
 
                 {formState.uncommonOptions && (
-                  <Row className="align-items-center mb-3">
+                  <Row className="align-items-center mb-3 border-bottom-thin">
                     <Col xs={12} md={6}>
                       <Form.Check
                         type="checkbox"
@@ -1245,7 +1377,7 @@ const PerfectHashForm = () => {
                 )}
 
                 {formState.uncommonOptions && (
-                  <Row className="align-items-center mb-3">
+                  <Row className="align-items-center mb-3 border-bottom-thin">
                     <Col xs={12} md={6}>
                       <Form.Check
                         type="checkbox"
@@ -1263,7 +1395,7 @@ const PerfectHashForm = () => {
 
                 {formState.platform === 'Windows' && formState.advancedOptions && (
                   <>
-                    <Row className="align-items-center mb-3">
+                    <Row className="align-items-center mb-3 border-bottom-thin">
                       <Col xs={12} md={6}>
                         <Form.Check
                           disabled
@@ -1277,7 +1409,7 @@ const PerfectHashForm = () => {
                         <ReactMarkdown>{cli['UseRwsSectionForTableValues']}</ReactMarkdown>
                       </Col>
                     </Row>
-                    <Row className="align-items-center mb-3">
+                    <Row className="align-items-center mb-3 border-bottom-thin">
                       <Col xs={12} md={6}>
                         <Form.Check
                           type="checkbox"
@@ -1295,7 +1427,7 @@ const PerfectHashForm = () => {
                 )}
 
                 {formState.platform === 'Windows' && formState.uncommonOptions && (
-                  <Row className="align-items-center mb-3">
+                  <Row className="align-items-center mb-3 border-bottom-thin">
                     <Col xs={12} md={6}>
                       <Form.Check
                         type="checkbox"
@@ -1312,7 +1444,7 @@ const PerfectHashForm = () => {
                 )}
 
                 {formState.uncommonOptions && (
-                  <Row className="align-items-center mb-3">
+                  <Row className="align-items-center mb-3 border-bottom-thin">
                     <Col xs={12} md={6}>
                       <Form.Check
                         type="checkbox"
@@ -1329,7 +1461,7 @@ const PerfectHashForm = () => {
                 )}
 
                 {formState.uncommonOptions && (
-                  <Row className="align-items-center mb-3">
+                  <Row className="align-items-center mb-3 border-bottom-thin">
                     <Col xs={12} md={6}>
                       <Form.Check
                         type="checkbox"
@@ -1346,7 +1478,7 @@ const PerfectHashForm = () => {
                 )}
 
                 {formState.uncommonOptions && (
-                  <Row className="align-items-center mb-3">
+                  <Row className="align-items-center mb-3 border-bottom-thin">
                     <Col xs={12} md={6}>
                       <Form.Check
                         type="checkbox"
@@ -1363,7 +1495,7 @@ const PerfectHashForm = () => {
                 )}
 
                 {formState.uncommonOptions && (
-                  <Row className="align-items-center mb-3">
+                  <Row className="align-items-center mb-3 border-bottom-thin">
                     <Col xs={12} md={6}>
                       <Form.Check
                         type="checkbox"
@@ -1380,7 +1512,7 @@ const PerfectHashForm = () => {
                 )}
 
                 {formState.uncommonOptions && (
-                  <Row className="align-items-center mb-3">
+                  <Row className="align-items-center mb-3 border-bottom-thin">
                     <Col xs={12} md={6}>
                       <Form.Check
                         type="checkbox"
@@ -1397,7 +1529,7 @@ const PerfectHashForm = () => {
                 )}
 
                 {formState.uncommonOptions && (
-                  <Row className="align-items-center mb-3">
+                  <Row className="align-items-center mb-3 border-bottom-thin">
                     <Col xs={12} md={6}>
                       <Form.Check
                         type="checkbox"
@@ -1414,7 +1546,7 @@ const PerfectHashForm = () => {
                 )}
 
                 {formState.advancedOptions && (
-                  <Row className="align-items-center mb-3">
+                  <Row className="align-items-center mb-3 border-bottom-thin">
                     <Col xs={12} md={6}>
                       <Form.Check
                         type="checkbox"
@@ -1432,7 +1564,7 @@ const PerfectHashForm = () => {
 
                 {formState.platform === 'Windows' && formState.advancedOptions && (
                   <>
-                    <Row className="align-items-center mb-3">
+                    <Row className="align-items-center mb-3 border-bottom-thin">
                       <Col xs={12} md={6}>
                         <Form.Check
                           disabled
@@ -1446,7 +1578,7 @@ const PerfectHashForm = () => {
                         <ReactMarkdown>{cli['TryUseAvx2HashFunction']}</ReactMarkdown>
                       </Col>
                     </Row>
-                    <Row className="align-items-center mb-3">
+                    <Row className="align-items-center mb-3 border-bottom-thin">
                       <Col xs={12} md={6}>
                         <Form.Check
                           type="checkbox"
@@ -1464,7 +1596,7 @@ const PerfectHashForm = () => {
                 )}
 
                 {formState.platform === 'Windows' && formState.advancedOptions && (
-                  <Row className="align-items-center mb-3">
+                  <Row className="align-items-center mb-3 border-bottom-thin">
                     <Col xs={12} md={6}>
                       <Form.Check
                         type="checkbox"
@@ -1482,7 +1614,7 @@ const PerfectHashForm = () => {
 
                 {formState.platform === 'Windows' && formState.advancedOptions && (
                   <>
-                    <Row className="align-items-center mb-3">
+                    <Row className="align-items-center mb-3 border-bottom-thin">
                       <Col xs={12} md={6}>
                         <Form.Check
                           disabled
@@ -1496,7 +1628,7 @@ const PerfectHashForm = () => {
                         <ReactMarkdown>{cli['TryUseAvx2MemoryCoverageFunction']}</ReactMarkdown>
                       </Col>
                     </Row>
-                    <Row className="align-items-center mb-3">
+                    <Row className="align-items-center mb-3 border-bottom-thin">
                       <Col xs={12} md={6}>
                         <Form.Check
                           type="checkbox"
@@ -1514,7 +1646,7 @@ const PerfectHashForm = () => {
                 )}
 
                 {formState.platform === 'Windows' && formState.advancedOptions && (
-                  <Row className="align-items-center mb-3">
+                  <Row className="align-items-center mb-3 border-bottom-thin">
                     <Col xs={12} md={6}>
                       <Form.Check
                         type="checkbox"
@@ -1532,7 +1664,7 @@ const PerfectHashForm = () => {
 
                 {formState.advancedOptions && (
                   <>
-                    <Row className="align-items-center mb-3">
+                    <Row className="align-items-center mb-3 border-bottom-thin">
                       <Col xs={12} md={6}>
                         <Form.Check
                           disabled
@@ -1546,7 +1678,7 @@ const PerfectHashForm = () => {
                         <ReactMarkdown>{cli['IncludeKeysInCompiledDll']}</ReactMarkdown>
                       </Col>
                     </Row>
-                    <Row className="align-items-center mb-3">
+                    <Row className="align-items-center mb-3 border-bottom-thin">
                       <Col xs={12} md={6}>
                         <Form.Check
                           type="checkbox"
@@ -1564,7 +1696,7 @@ const PerfectHashForm = () => {
                 )}
 
                 {formState.advancedOptions && (
-                  <Row className="align-items-center mb-3">
+                  <Row className="align-items-center mb-3 border-bottom-thin">
                     <Col xs={12} md={6}>
                       <Form.Check
                         type="checkbox"
@@ -1581,7 +1713,7 @@ const PerfectHashForm = () => {
                 )}
 
                 {formState.advancedOptions && (
-                  <Row className="align-items-center mb-3">
+                  <Row className="align-items-center mb-3 border-bottom-thin">
                     <Col xs={12} md={6}>
                       <Form.Check
                         type="checkbox"
@@ -1602,11 +1734,11 @@ const PerfectHashForm = () => {
         </Accordion>
 
         <Accordion defaultActiveKey={['0']} alwaysOpen>
-          <Accordion.Item eventKey="0">
+          <Accordion.Item eventKey="0" className="mb-3">
             <Accordion.Header>Table Create Parameters</Accordion.Header>
             <Accordion.Body>
               <div className="d-flex flex-column">
-                <Row className="align-items-center mb-3">
+                <Row className="align-items-center mb-3 border-bottom-thin">
                   <Col xs={12} md={6}>
                     <FloatingLabel controlId="graphImpl" label="Graph Implementation" className="mb-3">
                       <Form.Select
@@ -1629,7 +1761,7 @@ const PerfectHashForm = () => {
 
                 {!formState.findBestGraph && (
                   <>
-                    <Row className="align-items-center mb-3">
+                    <Row className="align-items-center mb-3 border-bottom-thin">
                       <Col xs={12} md={6}>
                         <FloatingLabel
                           controlId="maxSolveTimeInSeconds"
@@ -1647,7 +1779,7 @@ const PerfectHashForm = () => {
                       </Col>
                     </Row>
 
-                    <Row className="align-items-center mb-3">
+                    <Row className="align-items-center mb-3 border-bottom-thin">
                       <Col xs={12} md={6}>
                         <FloatingLabel controlId="fixedAttempts" label="Fixed Attempts" className="mb-3">
                           <Form.Control
@@ -1664,7 +1796,7 @@ const PerfectHashForm = () => {
                 )}
 
                 {formState.advancedOptions && (
-                  <Row className="align-items-center mb-3">
+                  <Row className="align-items-center mb-3 border-bottom-thin">
                     <Col xs={12} md={6}>
                       <FloatingLabel controlId="valueSizeInBytes" label="Value Size In Bytes" className="mb-3">
                         <Form.Control
@@ -1679,7 +1811,7 @@ const PerfectHashForm = () => {
                   </Row>
                 )}
 
-                <Row className="align-items-center mb-3">
+                <Row className="align-items-center mb-3 border-bottom-thin">
                   <Col xs={12} md={6}>
                     <FloatingLabel controlId="rng" label="Rng" className="mb-3">
                       <Form.Select value={formState.rng} onChange={(e) => handleChange('rng', e.target.value)}>
@@ -1699,7 +1831,7 @@ const PerfectHashForm = () => {
 
                 {formState.rng === 'Philox43210' && formState.uncommonOptions && (
                   <>
-                    <Row className="align-items-center mb-3">
+                    <Row className="align-items-center mb-3 border-bottom-thin">
                       <Col xs={12} md={6}>
                         <FloatingLabel controlId="rngSeed" label="Rng Seed" className="mb-3">
                           <Form.Control
@@ -1713,7 +1845,7 @@ const PerfectHashForm = () => {
                       </Col>
                     </Row>
 
-                    <Row className="align-items-center mb-3">
+                    <Row className="align-items-center mb-3 border-bottom-thin">
                       <Col xs={12} md={6}>
                         <FloatingLabel controlId="rngSubsequence" label="Rng Subsequence" className="mb-3">
                           <Form.Control
@@ -1727,7 +1859,7 @@ const PerfectHashForm = () => {
                       </Col>
                     </Row>
 
-                    <Row className="align-items-center mb-3">
+                    <Row className="align-items-center mb-3 border-bottom-thin">
                       <Col xs={12} md={6}>
                         <FloatingLabel controlId="rngOffset" label="Rng Offset" className="mb-3">
                           <Form.Control
@@ -1744,7 +1876,7 @@ const PerfectHashForm = () => {
                 )}
 
                 {formState.advancedOptions && (
-                  <Row className="align-items-center mb-3">
+                  <Row className="align-items-center mb-3 border-bottom-thin">
                     <Col xs={12} md={6}>
                       <FloatingLabel controlId="seeds" label="Seeds" className="mb-3">
                         <Form.Control value={formState.seeds} onChange={(e) => handleChange('seeds', e.target.value)} />
@@ -1758,7 +1890,7 @@ const PerfectHashForm = () => {
 
                 {formState.uncommonOptions && (
                   <>
-                    <Row className="align-items-center mb-3">
+                    <Row className="align-items-center mb-3 border-bottom-thin">
                       <Col xs={12} md={6}>
                         <FloatingLabel
                           controlId="seed3Byte1MaskCounts"
@@ -1776,7 +1908,7 @@ const PerfectHashForm = () => {
                       </Col>
                     </Row>
 
-                    <Row className="align-items-center mb-3">
+                    <Row className="align-items-center mb-3 border-bottom-thin">
                       <Col xs={12} md={6}>
                         <FloatingLabel
                           controlId="seed3Byte2MaskCounts"
@@ -1794,7 +1926,7 @@ const PerfectHashForm = () => {
                       </Col>
                     </Row>
 
-                    <Row className="align-items-center mb-3">
+                    <Row className="align-items-center mb-3 border-bottom-thin">
                       <Col xs={12} md={6}>
                         <FloatingLabel controlId="solutionsFoundRatio" label="Solutions Found Ratio" className="mb-3">
                           <Form.Control
@@ -1808,7 +1940,7 @@ const PerfectHashForm = () => {
                       </Col>
                     </Row>
 
-                    <Row className="align-items-center mb-3">
+                    <Row className="align-items-center mb-3 border-bottom-thin">
                       <Col xs={12} md={6}>
                         <FloatingLabel
                           controlId="attemptsBeforeTableResize"
@@ -1826,7 +1958,7 @@ const PerfectHashForm = () => {
                       </Col>
                     </Row>
 
-                    <Row className="align-items-center mb-3">
+                    <Row className="align-items-center mb-3 border-bottom-thin">
                       <Col xs={12} md={6}>
                         <FloatingLabel
                           controlId="maxNumberOfTableResizes"
@@ -1844,7 +1976,7 @@ const PerfectHashForm = () => {
                       </Col>
                     </Row>
 
-                    <Row className="align-items-center mb-3">
+                    <Row className="align-items-center mb-3 border-bottom-thin">
                       <Col xs={12} md={6}>
                         <FloatingLabel controlId="initialNumberOfTableResizes" label="Initial Number Of Table Resizes">
                           <Form.Control
@@ -1858,7 +1990,7 @@ const PerfectHashForm = () => {
                       </Col>
                     </Row>
 
-                    <Row className="align-items-center mb-3">
+                    <Row className="align-items-center mb-3 border-bottom-thin">
                       <Col xs={12} md={6}>
                         <FloatingLabel
                           controlId="autoResizeWhenKeysToEdgesRatioExceeds"
@@ -1875,7 +2007,7 @@ const PerfectHashForm = () => {
                       </Col>
                     </Row>
 
-                    <Row className="align-items-center mb-3">
+                    <Row className="align-items-center mb-3 border-bottom-thin">
                       <Col xs={12} md={6}>
                         <FloatingLabel controlId="mainWorkThreadpoolPriority" label="Main Work Threadpool Priority">
                           <Form.Select
@@ -1896,7 +2028,7 @@ const PerfectHashForm = () => {
                       </Col>
                     </Row>
 
-                    <Row className="align-items-center mb-3">
+                    <Row className="align-items-center mb-3 border-bottom-thin">
                       <Col xs={12} md={6}>
                         <FloatingLabel controlId="fileWorkThreadpoolPriority" label="File Work Threadpool Priority">
                           <Form.Select
@@ -1921,7 +2053,7 @@ const PerfectHashForm = () => {
 
                 {formState.platform === 'Windows' && formState.uncommonOptions && (
                   <>
-                    <Row className="align-items-center mb-3">
+                    <Row className="align-items-center mb-3 border-bottom-thin">
                       <Col xs={12} md={6}>
                         <FloatingLabel
                           controlId="functionHookCallbackDllPath"
@@ -1939,7 +2071,7 @@ const PerfectHashForm = () => {
                       </Col>
                     </Row>
 
-                    <Row className="align-items-center mb-3">
+                    <Row className="align-items-center mb-3 border-bottom-thin">
                       <Col xs={12} md={6}>
                         <FloatingLabel
                           controlId="functionHookCallbackFunctionName"
@@ -1957,7 +2089,7 @@ const PerfectHashForm = () => {
                       </Col>
                     </Row>
 
-                    <Row className="align-items-center mb-3">
+                    <Row className="align-items-center mb-3 border-bottom-thin">
                       <Col xs={12} md={6}>
                         <FloatingLabel
                           controlId="functionHookCallbackIgnoreRip"
@@ -1982,7 +2114,7 @@ const PerfectHashForm = () => {
         </Accordion>
 
         <Accordion defaultActiveKey={['0']} alwaysOpen>
-          <Accordion.Item eventKey="0">
+          <Accordion.Item eventKey="0" className="mb-3">
             <Accordion.Header>Console Output Character Legend</Accordion.Header>
             <Accordion.Body>
               <Card>
@@ -2002,10 +2134,10 @@ each table creation attempt, according to the following legend:
 |\`F\`   | Failed to create a table due to a target not being reached by a specific number of attempts. |
 |\`*\`   | None of the worker threads were able to allocate sufficient memory to attempt solving the graph. |
 |\`!\`   | The system is out of memory. |
-|\`L\`   | The system is running low on memory (a low memory event is triggered at about 90% RAM usage). In certain situations, we can detect this situation prior to actually running out of memory; in these cases, we abort the current table creation attempt (which will instantly relieve system memory pressure). |
+|\`L\`   | The system is running low on memory (a low memory event is triggered at about 90% RAM usage). In certain situations, we can detect this situation prior to actually running out of memory; in these cases, we abort the current table creation attempt (which will instantly relieve system memory pressure).  (Windows only.) |
 |\`V\`   | The graph was created successfully, however, we weren't able to allocate enough memory for the table values array in order for the array to be used after creation. This can be avoided by supplying the command line parameter \`--SkipTestAfterCreate\`. |
 |\`T\`   | The requested number of table elements was too large. |
-|\`S\`   | A shutdown event was received. This shouldn't be seen unless externally signaling the named shutdown event associated with a context. |
+|\`S\`   | A shutdown event was received. This shouldn't be seen unless externally signaling the named shutdown event associated with a context.  (Windows only.) |
 |\`t\`   | The solve timeout was reached before a solution was found. |
 |\`?\`   | The error code isn't recognized! E-mail trent@trent.me with details. |
             `}

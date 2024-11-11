@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
+import { forwardRef } from 'react';
 import { Navbar, Nav, Container, Button } from 'react-bootstrap';
 
 import { useTheme } from './ThemeContext';
 
-const PerfectHashNavbar = () => {
+const PerfectHashNavbar = forwardRef((props, ref) => {
   const { darkMode, toggleDarkMode } = useTheme();
 
   return (
-    <Navbar expand="lg" bg={darkMode ? 'dark' : 'light'} variant={darkMode ? 'dark' : 'light'}>
+    <Navbar ref={ref} expand="lg" bg={darkMode ? 'dark' : 'light'} variant={darkMode ? 'dark' : 'light'}>
       <Container>
         <Navbar.Brand href="#home">Perfect Hash Command Generator</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -23,6 +24,6 @@ const PerfectHashNavbar = () => {
       </Container>
     </Navbar>
   );
-};
+});
 
 export default PerfectHashNavbar;
