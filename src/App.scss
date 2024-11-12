@@ -4,7 +4,40 @@ $navbar-bg: transparent;
 $navbar-fg: white;
 $navbar-image: url('#{base-url}/bluebg.jpg');
 
-$font-family-sans-serif: 'Garamond', 'EB Garamond', 'Palatino', sans-serif;
+$comic-mono-normal-url: url('#{$base-url}/fonts/Comic.Mono.Nerd.Font.Complete.ttf');
+$comic-mono-bold-url: url('#{$base-url}/fonts/Comic.Mono.Bold.Nerd.Font.Complete.ttf');
+$eb-garamond-normal-url: url('#{$base-url}/fonts/EBGaramond-VariableFont_wght.ttf');
+$eb-garamond-italic-url: url('#{$base-url}/fonts/EBGaramond-Italic-VariableFont_wght.ttf');
+
+@font-face {
+  font-family: 'Comic Mono NF';
+  font-weight: normal;
+  font-style: normal;
+  src: $comic-mono-normal-url;
+}
+
+@font-face {
+  font-family: 'Comic Mono NF';
+  font-weight: bold;
+  font-style: normal;
+  src: $comic-mono-bold-url;
+}
+
+@font-face {
+  font-family: 'EB Garamond';
+  font-weight: 100 700;
+  font-style: normal;
+  src: $eb-garamond-normal-url format('truetype');
+}
+
+@font-face {
+  font-family: 'EB Garamond';
+  font-weight: 100 700;
+  font-style: italic;
+  src: $eb-garamond-italic-url format('truetype');
+}
+
+$font-family-sans-serif: 'EB Garamond', 'Palatino', sans-serif;
 $font-family-monospace: 'Comic Mono NF', 'Monaco', monospace;
 
 // Set the monospace font size to be smaller than the default font size.
@@ -13,7 +46,7 @@ $font-size-monospace: 0.70rem;
 $font-size-monospace-ipad-mini: 0.5rem;
 $font-size-monospace-mobile: 0.42rem;
 
-$font-size: 0.875rem;
+//$font-size: 0.875rem;
 
 //$text-align: justify;
 

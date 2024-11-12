@@ -16,19 +16,6 @@ export default defineConfig({
             },
         },
     },
-    /*
-    resolve: {
-        alias: {
-            'react-bootstrap-icons': path.resolve(__dirname, 'node_modules/react-bootstrap-icons/dist'),
-            'react-icons': path.resolve(__dirname, 'node_modules/react-icons')
-        }
-    },
-    optimizeDeps: {
-        include: [
-            //'react-bootstrap-icons',
-        ],
-    },
-    */
     base: base,
     plugins: [react()],
     server: {

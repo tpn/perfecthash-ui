@@ -1,26 +1,3 @@
-@font-face {
-  font-family: 'Comic Mono NF';
-  font-weight: normal;
-  src: url(https://trent.me/Comic.Mono.Bold.Nerd.Font.Complete.ttf);
-}
-
-@font-face {
-  font-family: 'Comic Mono NF';
-  font-weight: bold;
-  src: url(https://trent.me/Comic.Mono.Nerd.Font.Complete.ttf);
-}
-
-@font-face {
-  font-family: 'EB Garamond';
-  font-weight: normal;
-  src: url(https://trent.me/EBGaramond-VariableFont_wght.ttf);
-}
-
-/*
-.App {
-  text-align: center;
-}
-*/
 
 .App-logo {
   height: 40vmin;
