@@ -272,7 +272,7 @@ const initialFormStateWindows = {
   platform: 'Windows',
   keysPath: 'c:\\src\\perfecthash-keys\\sys32\\HologramWorld-31016.keys',
   keysDirectory: 'c:\\src\\perfecthash-keys\\sys32',
-  outputDirectory: 'c:\\Temp\\ph.out',
+  outputDirectory: `c:\\src\\perfecthash-interop\\${getCurrentDateTimeString()}`,
 };
 
 const initialFormStateLinux = {
@@ -280,11 +280,12 @@ const initialFormStateLinux = {
   platform: 'Linux',
   keysPath: '~/src/perfecthash-keys/sys32/HologramWorld-31016.keys',
   keysDirectory: '~/src/perfecthash-keys/sys32',
-  outputDirectory: '~/tmp/ph.out',
+  outputDirectory: `~/src/perfecthash-interop/${getCurrentDateTimeString()}`,
 };
 
 const generateCommand = (formState) => {
   const {
+    autoCopyToClipboard,
     includeDefaults,
     platform,
     exeType,
@@ -484,6 +485,10 @@ const generateCommand = (formState) => {
     }
   }
   if (remark) command += ` --Remark="${remark}"`;
+
+  if (autoCopyToClipboard) {
+    navigator.clipboard.writeText(command);
+  }
 
   return command;
 };
