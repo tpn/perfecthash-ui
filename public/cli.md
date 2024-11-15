@@ -109,14 +109,9 @@ is retained for historical reasons.
 
 ## FirstGraphWins
 
-This is the default behavior.  When searching for solutions in parallel, the
-first graph to be found, *"wins"*.  i.e. it's the solution that is
-subsequently written to disk (assuming `--NoFileIo` is not specified).
-
-**Note:** This is a dummy checkbox that is provided for the sake of
-documenting the default graph solving mode.  The CLI does not recognize
-the option `--FirstGraphWins`---it is implied by default in the absence of
-the `--FindBestGraph` flag.
+When searching for solutions in parallel, the first acyclic graph to
+be found, *wins*; i.e. it's the solution that is subsequently written
+to disk (assuming `--NoFileIo` is not specified).
 
 ## FindBestGraph
 
@@ -134,7 +129,7 @@ See also `--TargetNumberOfSolutions` and `--FixedAttempts`.
 
 ## SkipMemoryCoverageInFirstGraphWinsMode
 
-Skips calculating memory coverage information when in *first graph wins*
+Skips calculating memory coverage information when in `--FirstGraphWins`
 mode.  This will result in the corresponding fields in the `.csv` output
 indicating 0.  Calculating memory coverage isn't particularly expensive,
 so there's no harm in leaving enabled as default.  Thus, this flag is only
